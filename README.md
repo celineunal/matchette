@@ -1,2 +1,2 @@
-# clothingapp
-Clothing app we are making for Software Development course.
+# Matchette 
+Clothing app that would visualize clothing styles
