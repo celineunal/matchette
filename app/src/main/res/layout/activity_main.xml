@@ -17,28 +17,28 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="75dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:orientation="horizontal">
+            android:paddingRight="20dp">
 
             <Button
-            android:id="@+id/customize_button"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:text="@string/customize"
-            android:layout_weight="1"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="5dp"/>
+                android:id="@+id/customize_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="15dp"
+                android:layout_weight="1"
+                android:text="@string/customize" />
 
             <Button
                 android:id="@+id/gallery_button"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text="@string/gallery"
-                android:layout_weight="1"
+                android:layout_marginBottom="5dp"
                 android:layout_marginTop="15dp"
-                android:layout_marginBottom="5dp"/>
+                android:layout_weight="1"
+                android:text="@string/gallery" />
 
         </LinearLayout>
 
@@ -66,20 +66,19 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="4"
+            android:animateLayoutChanges="true"
+            android:background="@color/colorAccent"
+            android:orientation="horizontal"
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
-            android:orientation="horizontal"
-            android:background="@color/colorAccent"
-            android:visibility="gone"
-            android:animateLayoutChanges="true">
+            android:visibility="gone">
 
             <Button
                 android:id="@+id/temporary_button_2"
-                android:layout_gravity="center"
-                android:layout_width="200dp"
-                android:layout_height="100dp"
-                android:text="@string/temporary"/>
-
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="bottom"
+                android:text="@string/done" />
         </LinearLayout>
 
     </LinearLayout>
