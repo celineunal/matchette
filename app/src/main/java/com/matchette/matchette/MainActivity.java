@@ -6,45 +6,65 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import com.skydoves.colorpickerpreference.ColorEnvelope;
+import com.skydoves.colorpickerpreference.ColorListener;
+import com.skydoves.colorpickerpreference.ColorPickerView;
+
 public class MainActivity extends AppCompatActivity {
+
+    //Set the variables
+    String [] styles = {};
+    String shirtColor;
+    String pantColor;
+    String shirtType;
+    String pantType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        // For animation when showing/hiding the snackbar
-        final ViewGroup wholeLayout = findViewById(R.id.whole_layout);
+        // For animation when showing/hiding the snackbar so that it doesn't show white space.
+        final LinearLayout wholeLayout = findViewById(R.id.whole_layout);
         LayoutTransition transitioner1 = wholeLayout.getLayoutTransition();
         transitioner1.setStartDelay(LayoutTransition.CHANGE_DISAPPEARING, 0);
         transitioner1.setStartDelay(LayoutTransition.APPEARING, 0);
         transitioner1.setStartDelay(LayoutTransition.DISAPPEARING, 0);
+        transitioner1.setStartDelay(LayoutTransition.CHANGE_APPEARING, 0);
+        transitioner1.setStartDelay(LayoutTransition.CHANGING, 0);
 
-        final ViewGroup frame = findViewById(R.id.temporary_frame);
+
+
+        final FrameLayout frame = findViewById(R.id.temporary_frame);
         LayoutTransition transitioner2 = frame.getLayoutTransition();
         transitioner2.setStartDelay(LayoutTransition.CHANGE_DISAPPEARING, 0);
         transitioner2.setStartDelay(LayoutTransition.APPEARING, 0);
         transitioner2.setStartDelay(LayoutTransition.DISAPPEARING, 0);
+        transitioner2.setStartDelay(LayoutTransition.CHANGE_APPEARING, 0);
+        transitioner2.setStartDelay(LayoutTransition.CHANGING, 0);
 
-        final ViewGroup snackbar = findViewById(R.id.custom_snackbar);
-        LayoutTransition transitioner3 = snackbar.getLayoutTransition();
+        //This is the custom snackbar that is set to be GONE at creation.
+        final LinearLayout snackBar = this.findViewById(R.id.custom_snackbar);
+
+        LayoutTransition transitioner3 = snackBar.getLayoutTransition();
         transitioner3.setStartDelay(LayoutTransition.CHANGE_DISAPPEARING, 0);
         transitioner3.setStartDelay(LayoutTransition.APPEARING, 0);
         transitioner3.setStartDelay(LayoutTransition.DISAPPEARING, 0);
+        transitioner3.setStartDelay(LayoutTransition.CHANGE_APPEARING, 0);
+        transitioner3.setStartDelay(LayoutTransition.CHANGING, 0);
+
 
         //Temporary buttons 1 and 2, the one in the middle and the one at the bottom. Should show/hide the custom snackbar.
         final Button tempButton1 = findViewById(R.id.temporary_button);
         final Button tempButton2 = findViewById(R.id.temporary_button_2);
+        final ColorPickerView colorPicker = findViewById(R.id.colorPickerView);
 
 
-        //This is the custom snackbar that is set to be GONE at creation.
-        final LinearLayout snackBar = this.findViewById(R.id.custom_snackbar);
 
         /*Set button 1 behavior, not satisfied by this but it's a start. It forces me to have a View parameter
         in the onClick method override.
@@ -54,10 +74,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (snackBar.getVisibility()==LinearLayout.GONE) {
                     snackBar.setVisibility(LinearLayout.VISIBLE);
-                    show_layout(snackBar);
+                    //show_layout(snackBar);
 
                 } else {
-                    hide_layout(snackBar);
+                    //hide_layout(snackBar);
                     snackBar.setVisibility(LinearLayout.GONE);
                 }
             }
@@ -68,10 +88,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (snackBar.getVisibility() != LinearLayout.GONE) {
-                    hide_layout(snackBar);
+                    //hide_layout(snackBar);
                     snackBar.setVisibility(LinearLayout.GONE);
                 }
 
+            }
+        });
+
+
+
+        colorPicker.setColorListener(new ColorListener() {
+            @Override
+            public void onColorSelected(ColorEnvelope colorEnvelope) {
+                frame.setBackgroundColor(colorEnvelope.getColor());
             }
         });
 
@@ -88,10 +117,11 @@ public class MainActivity extends AppCompatActivity {
         final int screenHeight = getScreenHeight();
         ObjectAnimator animator = ObjectAnimator.ofFloat(l, "y", screenHeight, (screenHeight * 0.619F));
         animator.setInterpolator(new DecelerateInterpolator());
+        animator.setStartDelay(0);
         animator.start();
     }
 
-    /*
+    /**
      * Hides the custom snackbar with animation.
      *
      * @param l is the LinearLayout you want to be hidden.
@@ -100,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
         final int screenHeight = getScreenHeight();
         ObjectAnimator animator = ObjectAnimator.ofFloat(l, "y", screenHeight);
         animator.setInterpolator(new DecelerateInterpolator());
+        animator.setStartDelay(0);
         animator.start();
     }
 
@@ -112,5 +143,6 @@ public class MainActivity extends AppCompatActivity {
         this.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         return displaymetrics.heightPixels;
     }
+
 }
 
