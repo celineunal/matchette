@@ -18,7 +18,8 @@ import com.skydoves.colorpickerpreference.ColorPickerView;
 public class MainActivity extends AppCompatActivity {
 
     //Set the variables
-    String [] styles = {};
+    String [] shirts;
+    String [] pants;
     String shirtColor;
     String pantColor;
     String shirtType;
@@ -138,11 +139,36 @@ public class MainActivity extends AppCompatActivity {
      * Gets the screen height.
      * @return The screen height as an int.
      */
-    int getScreenHeight() {
+    public int getScreenHeight() {
         DisplayMetrics displaymetrics = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         return displaymetrics.heightPixels;
     }
 
+    /**
+     * Sets the shirtColor or pantColor variable.
+     * @param colorHexValue
+     * @param type Shirt or pants.
+     */
+    public void setColor (String colorHexValue, String type) {
+        if (type == "shirt"){
+            shirtColor = colorHexValue;
+        } else if (type == "pants") {
+            pantColor = colorHexValue;
+        }
+    }
+
+    /**
+     * Sets the shirtType or pantType variable.
+     * @param style
+     * @param type Shirt or pants.
+     */
+    public void setStyle (String style, String type) {
+        if (type == "shirt"){
+            shirtType= style;
+        } else if (type == "pants") {
+            pantType = style;
+        }
+    }
 }
 
