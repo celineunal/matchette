@@ -4,18 +4,30 @@ import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.skydoves.colorpickerpreference.ColorEnvelope;
 import com.skydoves.colorpickerpreference.ColorListener;
 import com.skydoves.colorpickerpreference.ColorPickerView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
+
+    //For the recyclerView
+    private List<Style> styleList = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private StyleAdapter sAdapter;
 
     //Set the variables
     String [] shirts;
@@ -62,9 +74,20 @@ public class MainActivity extends AppCompatActivity {
 
         //Temporary buttons 1 and 2, the one in the middle and the one at the bottom. Should show/hide the custom snackbar.
         final Button tempButton1 = findViewById(R.id.temporary_button);
-        final Button tempButton2 = findViewById(R.id.temporary_button_2);
+        final ImageButton tempButton2 = findViewById(R.id.button3);
         final ColorPickerView colorPicker = findViewById(R.id.colorPickerView);
 
+        //RecyclerView:
+        recyclerView = findViewById(R.id.recycler_view);
+
+        //Set up the RecyclerView
+        sAdapter = new StyleAdapter(styleList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(sAdapter);
+
+        prepareShirtStyles();
 
 
         /*Set button 1 behavior, not satisfied by this but it's a start. It forces me to have a View parameter
@@ -169,6 +192,18 @@ public class MainActivity extends AppCompatActivity {
         } else if (type == "pants") {
             pantType = style;
         }
+    }
+
+    private void prepareShirtStyles () {
+        Style style = new Style("Tshirt", R.drawable.tshirt);
+        styleList.add(style);
+
+        style = new Style("Shirt", R.drawable.shirt);
+        styleList.add(style);
+
+        style = new Style("Polo Shirt", R.drawable.polo);
+        styleList.add(style);
+
     }
 }
 

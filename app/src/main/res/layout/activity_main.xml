@@ -75,7 +75,7 @@
             android:orientation="vertical"
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -84,37 +84,52 @@
                 android:layout_weight="10"
                 android:orientation="horizontal">
 
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    android:scrollbars="vertical"
+                    android:scrollbarAlwaysDrawVerticalTrack="true"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="20dp"/>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical"></LinearLayout>\
+                    android:orientation="vertical">
 
-                <com.skydoves.colorpickerpreference.ColorPickerView
-                    android:id="@+id/colorPickerView"
-                    android:layout_height="match_parent"
-                    android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    app:palette="@drawable/palette"
-                    app:selector="@drawable/wheel" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_weight="0"
+                        android:gravity="end">
+
+                        <ImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:id="@+id/button3"
+                            android:src="@drawable/close"
+                            android:background="@null"
+                            android:paddingEnd="15dp"
+                            android:paddingTop="5dp"/>
+                    </LinearLayout>
+
+                    <com.skydoves.colorpickerpreference.ColorPickerView
+                        android:id="@+id/colorPickerView"
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
+                        android:padding="10dp"
+                        app:palette="@drawable/palette"
+                        app:selector="@drawable/wheel" />
+
+                </LinearLayout>
+
+
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_weight="0"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/button3"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="Button" />
-            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>
