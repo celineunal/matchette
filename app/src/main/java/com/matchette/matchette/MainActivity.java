@@ -77,6 +77,19 @@ public class MainActivity extends AppCompatActivity {
         final ImageButton tempButton2 = findViewById(R.id.button3);
         final ColorPickerView colorPicker = findViewById(R.id.colorPickerView);
 
+        //Set the swipe behavior (check out the OnSwipeTouchListener class).
+        wholeLayout.setOnTouchListener(new OnSwipeTouchListener(this) {
+            @Override
+            public void onSwipeDown() {
+                snackBar.setVisibility(LinearLayout.GONE);
+            }
+
+            @Override
+            public void onSwipeUp() {
+                snackBar.setVisibility(LinearLayout.VISIBLE);
+            }
+        });
+
         //RecyclerView:
         recyclerView = findViewById(R.id.recycler_view);
 
