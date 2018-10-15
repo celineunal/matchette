@@ -103,12 +103,13 @@ public class MainActivity extends AppCompatActivity {
 
         prepareShirtStyles();
 
+        // Listener for recycler view
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 Style shirtType = styleList.get(position);
                 // fragment.setStyle(shirtType, type); ??
-                Toast.makeText(getApplicationContext(), shirtType.getName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), shirtType.getName(), Toast.LENGTH_SHORT).show(); // temporary
             }
 
             @Override
@@ -157,9 +158,27 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        // Customize and gallery buttons
+        final Button customizeButton = findViewById(R.id.customize_button);
+        customizeButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "Coming soon!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        final Button galleryButton = findViewById(R.id.gallery_button);
+        galleryButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "Coming soon!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
     }
 
-    //Implement custom animation -- tried to fix the bug here
+    //Implement custom animation
     /**
      * Shows the custom snackbar with animation.
      *
