@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.skydoves.colorpickerpreference.ColorEnvelope;
 import com.skydoves.colorpickerpreference.ColorListener;
@@ -101,6 +102,20 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(sAdapter);
 
         prepareShirtStyles();
+
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Style shirtType = styleList.get(position);
+                // fragment.setStyle(shirtType, type); ??
+                Toast.makeText(getApplicationContext(), shirtType.getName(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
 
 
         /*Set button 1 behavior, not satisfied by this but it's a start. It forces me to have a View parameter
