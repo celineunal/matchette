@@ -1,15 +1,12 @@
 package com.matchette.matchette;
 
 import android.animation.LayoutTransition;
-import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -25,18 +22,19 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    //For the recyclerView
-    private List<Style> styleList = new ArrayList<>();
-    private RecyclerView recyclerView;
-    private StyleAdapter sAdapter;
-
-    //Set the variables
     String [] shirts;
     String [] pants;
     String shirtColor;
     String pantColor;
     String shirtType;
     String pantType;
+
+    //For the recyclerView
+    private List<Style> shirtStyleList = new ArrayList<>();
+    private List<Style> pantsStyleList = new ArrayList<>();
+    private List<Style> currentItemList = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private StyleAdapter sAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
         transitioner1.setStartDelay(LayoutTransition.CHANGING, 0);
 
 
-
         final FrameLayout frame = findViewById(R.id.temporary_frame);
         LayoutTransition transitioner2 = frame.getLayoutTransition();
         transitioner2.setStartDelay(LayoutTransition.CHANGE_DISAPPEARING, 0);
@@ -61,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         transitioner2.setStartDelay(LayoutTransition.DISAPPEARING, 0);
         transitioner2.setStartDelay(LayoutTransition.CHANGE_APPEARING, 0);
         transitioner2.setStartDelay(LayoutTransition.CHANGING, 0);
+
 
         //This is the custom snackbar that is set to be GONE at creation.
         final LinearLayout snackBar = this.findViewById(R.id.custom_snackbar);
@@ -73,12 +71,20 @@ public class MainActivity extends AppCompatActivity {
         transitioner3.setStartDelay(LayoutTransition.CHANGING, 0);
 
 
-        //Temporary buttons 1 and 2, the one in the middle and the one at the bottom. Should show/hide the custom snackbar.
-        final Button tempButton1 = findViewById(R.id.temporary_button);
-        final ImageButton tempButton2 = findViewById(R.id.button3);
+        //Temporary buttons representing shirt and pants. Should show/hide the custom snackbar.
+        final Button shirtButton = findViewById(R.id.shirtButton);
+        final Button pantsButton = findViewById(R.id.pantsButton);
+
+
+        final ImageButton closeSnackbar = findViewById(R.id.closeSnackbar);
         final ColorPickerView colorPicker = findViewById(R.id.colorPickerView);
 
-        //Set the swipe behavior (check out the OnSwipeTouchListener class).
+
+        // Set the swipe behavior (check out the OnSwipeTouchListener class).
+
+        /* I commented out the swiping up function. When the app is just opened and neither shirt nor pants are clicked on yet,
+         * there would be a blank space in the snackbar where the recycler view should be, if the snackbar was swiped up. */
+
         wholeLayout.setOnTouchListener(new OnSwipeTouchListener(this) {
             @Override
             public void onSwipeDown() {
@@ -87,57 +93,76 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSwipeUp() {
-                snackBar.setVisibility(LinearLayout.VISIBLE);
+//                snackBar.setVisibility(LinearLayout.VISIBLE);
             }
         });
 
-        //RecyclerView:
-        recyclerView = findViewById(R.id.recycler_view);
 
-        //Set up the RecyclerView
-        sAdapter = new StyleAdapter(styleList);
+        // RecyclerView
+        recyclerView = findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(sAdapter);
 
         prepareShirtStyles();
+        preparePantsStyles();
 
-        // Listener for recycler view
+
+        // Listener for RecyclerView
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Style shirtType = styleList.get(position);
-                // fragment.setStyle(shirtType, type); ??
-                Toast.makeText(getApplicationContext(), shirtType.getName(), Toast.LENGTH_SHORT).show(); // temporary
+                Style currentStyle = currentItemList.get(position);
+                // fragment.setStyle(curentStyle, type); ??
+                Toast.makeText(getApplicationContext(), currentStyle.getName() + " " + currentStyle.getRid(), Toast.LENGTH_SHORT).show(); // temporary
             }
 
             @Override
-            public void onLongClick(View view, int position) {
-
-            }
+            public void onLongClick(View view, int position) {}
         }));
 
 
-        /*Set button 1 behavior, not satisfied by this but it's a start. It forces me to have a View parameter
+        /*Set the shirtButton and pantsButton behavior, not satisfied by this but it's a start. It forces me to have a View parameter
         in the onClick method override.
          */
-        tempButton1.setOnClickListener(new View.OnClickListener() {
+
+        shirtButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (snackBar.getVisibility()==LinearLayout.GONE) {
+                if (currentItemList == shirtStyleList && snackBar.getVisibility()==LinearLayout.GONE)
                     snackBar.setVisibility(LinearLayout.VISIBLE);
-                    //show_layout(snackBar);
-
-                } else {
-                    //hide_layout(snackBar);
-                    snackBar.setVisibility(LinearLayout.GONE);
+                else if (currentItemList != shirtStyleList && snackBar.getVisibility()==LinearLayout.VISIBLE){
+                    currentItemList = shirtStyleList;
+                    recycShirt();
+                }
+                else if (currentItemList != shirtStyleList && snackBar.getVisibility()==LinearLayout.GONE){
+                    currentItemList = shirtStyleList;
+                    recycShirt();
+                    snackBar.setVisibility(LinearLayout.VISIBLE);
                 }
             }
         });
 
-        //Set the Button 2 behavior.
-        tempButton2.setOnClickListener(new View.OnClickListener() {
+        pantsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentItemList == pantsStyleList && snackBar.getVisibility()==LinearLayout.GONE)
+                    snackBar.setVisibility(LinearLayout.VISIBLE);
+                else if (currentItemList != pantsStyleList && snackBar.getVisibility()==LinearLayout.VISIBLE){
+                    currentItemList = pantsStyleList;
+                    recycPants();
+                }
+                else if (currentItemList != pantsStyleList && snackBar.getVisibility()==LinearLayout.GONE){
+                    currentItemList = pantsStyleList;
+                    recycPants();
+                    snackBar.setVisibility(LinearLayout.VISIBLE);
+                }
+            }
+        });
+
+
+        // Set the closeSnackbar behavior.
+        closeSnackbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (snackBar.getVisibility() != LinearLayout.GONE) {
@@ -148,8 +173,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
+        // Set up the color picker
         colorPicker.setColorListener(new ColorListener() {
             @Override
             public void onColorSelected(ColorEnvelope colorEnvelope) {
@@ -174,45 +198,23 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Coming soon!", Toast.LENGTH_SHORT).show();
             }
         });
-
-
     }
 
-    //Implement custom animation
+
     /**
-     * Shows the custom snackbar with animation.
-     *
-     * @param l is the LinearLayout you want to be visible.
+     * Set up the RecyclerView for shirts
      */
-    public void show_layout(LinearLayout l) {
-        final int screenHeight = getScreenHeight();
-        ObjectAnimator animator = ObjectAnimator.ofFloat(l, "y", screenHeight, (screenHeight * 0.619F));
-        animator.setInterpolator(new DecelerateInterpolator());
-        animator.setStartDelay(0);
-        animator.start();
+    private void recycShirt (){
+        sAdapter = new StyleAdapter(shirtStyleList);
+        recyclerView.setAdapter(sAdapter);
     }
 
     /**
-     * Hides the custom snackbar with animation.
-     *
-     * @param l is the LinearLayout you want to be hidden.
+     * Set up the RecyclerView for pants
      */
-    public void hide_layout(LinearLayout l) {
-        final int screenHeight = getScreenHeight();
-        ObjectAnimator animator = ObjectAnimator.ofFloat(l, "y", screenHeight);
-        animator.setInterpolator(new DecelerateInterpolator());
-        animator.setStartDelay(0);
-        animator.start();
-    }
-
-    /**
-     * Gets the screen height.
-     * @return The screen height as an int.
-     */
-    public int getScreenHeight() {
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        this.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        return displaymetrics.heightPixels;
+    private void recycPants (){
+        sAdapter = new StyleAdapter(pantsStyleList);
+        recyclerView.setAdapter(sAdapter);
     }
 
     /**
@@ -242,15 +244,61 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void prepareShirtStyles () {
-        Style style = new Style("Tshirt", R.drawable.tshirt);
-        styleList.add(style);
+        Style style = new Style("T-shirt", R.drawable.tshirt);
+        shirtStyleList.add(style);
 
         style = new Style("Shirt", R.drawable.shirt);
-        styleList.add(style);
+        shirtStyleList.add(style);
 
         style = new Style("Polo Shirt", R.drawable.polo);
-        styleList.add(style);
+        shirtStyleList.add(style);
 
     }
+
+    private void preparePantsStyles() {
+        Style style = new Style("Pants", R.drawable.pants);
+        pantsStyleList.add(style);
+
+        style = new Style("Shorts", R.drawable.shorts);
+        pantsStyleList.add(style);
+    }
+
+
+
+    //    //Implement custom animation
+//    /**
+//     * Shows the custom snackbar with animation.
+//     *
+//     * @param l is the LinearLayout you want to be visible.
+//     */
+//    public void show_layout(LinearLayout l) {
+//        final int screenHeight = getScreenHeight();
+//        ObjectAnimator animator = ObjectAnimator.ofFloat(l, "y", screenHeight, (screenHeight * 0.619F));
+//        animator.setInterpolator(new DecelerateInterpolator());
+//        animator.setStartDelay(0);
+//        animator.start();
+//    }
+//
+//    /**
+//     * Hides the custom snackbar with animation.
+//     *
+//     * @param l is the LinearLayout you want to be hidden.
+//     */
+//    public void hide_layout(LinearLayout l) {
+//        final int screenHeight = getScreenHeight();
+//        ObjectAnimator animator = ObjectAnimator.ofFloat(l, "y", screenHeight);
+//        animator.setInterpolator(new DecelerateInterpolator());
+//        animator.setStartDelay(0);
+//        animator.start();
+//    }
+//    /**
+//     //     * Gets the screen height.
+//     //     * @return The screen height as an int.
+//     //     */
+//    public int getScreenHeight() {
+//        DisplayMetrics displaymetrics = new DisplayMetrics();
+//        this.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+//        return displaymetrics.heightPixels;
+//    }
 }
 

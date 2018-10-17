@@ -2,6 +2,7 @@
     <string name="app_name">Matchette</string>
     <string name="customize">Customize</string>
     <string name="gallery">Gallery</string>
-    <string name="temporary">Temporary</string>
+    <string name="shirt">Shirt</string>
+    <string name="pants">Pants</string>
     <string name="done">Done</string>
 </resources>
