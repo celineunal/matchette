@@ -25,7 +25,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp">
 
-            <Button
+            <android.support.design.button.MaterialButton
                 android:id="@+id/customize_button"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -37,7 +37,7 @@
                 android:elevation="15dp"
                 android:text="@string/customize" />
 
-            <Button
+            <android.support.design.button.MaterialButton
                 android:id="@+id/gallery_button"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
