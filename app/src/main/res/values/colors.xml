@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#FFEB3B</color>
-    <color name="primary_dark">#FBC02D</color>
-    <color name="primary_light">#FFF9C4</color>
-    <color name="accent">#536DFE</color>
-    <color name="primary_text">#212121</color>
-    <color name="secondary_text">#757575</color>
-    <color name="icons">#212121</color>
-    <color name="divider">#BDBDBD</color>
+    <color name="primary">#E2F1F9</color>
+    <color name="primary_dark">#b0bec6</color>
+    <color name="primary_light">#ffffff</color>
+    <color name="accent">#FFBAA6</color>
+    <color name="primary_text">#000000</color>
+    <color name="secondary_text">#000000</color>
+    <color name="icons">#000000</color>
+    <color name="divider">#ffffff</color>
 </resources>

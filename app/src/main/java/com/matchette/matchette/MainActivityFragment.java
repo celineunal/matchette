@@ -51,7 +51,7 @@ public class MainActivityFragment extends android.app.Fragment {
                         changeColorUtil(color, "pants",type,  1);
                         break;
                     case "shorts":
-                        changeColorUtil(color, "shorts",type, 8);
+                        changeColorUtil(color, "shorts",type, 2);
                         break;
                 }
                 break;
@@ -149,7 +149,7 @@ public class MainActivityFragment extends android.app.Fragment {
                         lp3.weight=0.7f;
                         pantLayout.setLayoutParams(lp3);
                         LinearLayout.LayoutParams lp4 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
-                        lp4.weight=1f;
+                        lp4.weight=0f;
                         paddingLayout.setLayoutParams(lp4);
                         break;
                 }
@@ -162,6 +162,23 @@ public class MainActivityFragment extends android.app.Fragment {
                              Bundle savedInstanceState) {
         super.onCreateView(inflater,container,savedInstanceState);
         fragment = inflater.inflate(R.layout.fragment_main, container, false);
+
+        //Tried to get the swiping work in the fragment, but no dice.
+
+/*        LinearLayout wholeFragment = fragment.findViewById(R.id.fragmentLayout);
+        final LinearLayout snackBar = getActivity().findViewById(R.id.custom_snackbar);
+        wholeFragment.setOnTouchListener(new OnSwipeTouchListener(getActivity().getApplicationContext()) {
+            @Override
+            public void onSwipeDown() {
+                snackBar.setVisibility(LinearLayout.GONE);
+            }
+
+            @Override
+            public void onSwipeUp() {
+//                snackBar.setVisibility(LinearLayout.VISIBLE);
+            }
+        });*/
+
         pant = (ImageView) fragment.findViewById(R.id.pant);
         shirt = (ImageView) fragment.findViewById(R.id.shirt);
         shirtLayout = (LinearLayout) fragment.findViewById(R.id.shirtLayout);
@@ -183,6 +200,7 @@ public class MainActivityFragment extends android.app.Fragment {
                 act.animationLogicPant();
             }
         });
+
         return fragment;
     }
 }

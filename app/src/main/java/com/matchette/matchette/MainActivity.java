@@ -21,8 +21,8 @@ import android.widget.Toast;
 
 import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
-import com.skydoves.colorpickerpreference.ColorEnvelope;
-import com.skydoves.colorpickerpreference.ColorListener;
+//import com.skydoves.colorpickerpreference.ColorEnvelope;
+//import com.skydoves.colorpickerpreference.ColorListener;
 import com.flask.colorpicker.ColorPickerView;
 
 import java.util.ArrayList;
@@ -253,8 +253,8 @@ public class MainActivity extends Activity {
         Style style = new Style("pants", R.drawable.ic_pant);
         pantsStyleList.add(style);
 
-//        style = new Style("shorts", R.drawable.ic_shorts);
-//        pantsStyleList.add(style);
+        style = new Style("shorts", R.drawable.ic_shorts);
+        pantsStyleList.add(style);
     }
 
 
