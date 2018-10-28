@@ -1,6 +1,5 @@
 package com.matchette.matchette;
 
-import android.animation.LayoutTransition;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,6 +42,24 @@ public class MainActivityFragment extends android.app.Fragment {
                     case "hoodie":
                         changeColorUtil(color, "hoodie", type, 1);
                         break;
+                    case "woman-sleeveless-shirt":
+                        changeColorUtil(color, "woman-sleeveless-shirt", type, 1);
+                        break;
+                    case "blouse":
+                        changeColorUtil(color, "blouse", type, 3);
+                        break;
+                    case "man-coat":
+                        changeColorUtil(color, "man-coat", type, 4);
+                        break;
+                    case "man-suit":
+                        changeColorUtil(color, "man-suit", type, 1);
+                        break;
+                    case "woman-jacket":
+                        changeColorUtil(color,"woman-jacket", type, 4);
+                        break;
+                    case "woman-suit":
+                        changeColorUtil(color,"woman-suit", type, 5);
+                        break;
                 }
                 break;
             case "pant":
@@ -52,6 +69,21 @@ public class MainActivityFragment extends android.app.Fragment {
                         break;
                     case "shorts":
                         changeColorUtil(color, "shorts",type, 2);
+                        break;
+                    case "formal-pants":
+                        changeColorUtil(color, "formal-pants",type, 1);
+                        break;
+                    case "woman-pants":
+                        changeColorUtil(color, "woman-pants", type, 1);
+                        break;
+                    case "skirt":
+                        changeColorUtil(color, "skirt", type, 1);
+                        break;
+                    case "long-skirt":
+                        changeColorUtil(color, "long-skirt", type, 4);
+                        break;
+                    case "formal-skirt":
+                        changeColorUtil(color, "formal-skirt", type, 2);
                         break;
                 }
                 break;
@@ -73,12 +105,46 @@ public class MainActivityFragment extends android.app.Fragment {
             case "hoodie":
                 id = R.drawable.ic_hoodie;
                 break;
+            case "woman-sleeveless-shirt":
+                id = R.drawable.ic_woman_sleeveless_shirt;
+                break;
+            case "blouse":
+                id = R.drawable.ic_blouse;
+                break;
+            case "man-coat":
+                id = R.drawable.ic_man_coat;
+                break;
+            case "man-suit":
+                id = R.drawable.ic_man_suit;
+                break;
+            case "woman-jacket":
+                id = R.drawable.ic_woman_jacket;
+                break;
             case "pants":
                 id = R.drawable.ic_pant;
                 break;
             case "shorts":
                 id = R.drawable.ic_shorts;
                 break;
+            case "formal-pants":
+                id = R.drawable.ic_formal_pants;
+                break;
+            case "woman-pants":
+                id = R.drawable.ic_woman_pants;
+                break;
+            case "skirt":
+                id = R.drawable.ic_skirt;
+                break;
+            case "long-skirt":
+                id = R.drawable.ic_long_skirt;
+                break;
+            case "formal-skirt":
+                id = R.drawable.ic_formal_skirt;
+                break;
+            case "woman-suit":
+                id = R.drawable.ic_woman_suit;
+                break;
+
         }
         ImageView view = (type.equals("shirt")) ? shirt:pant;
         VectorChildFinder vector = new VectorChildFinder(getActivity(), id, view);
@@ -90,67 +156,103 @@ public class MainActivityFragment extends android.app.Fragment {
 
     protected void changeStyle(String type, String style){
         Log.d("change 2", type + " | " + style);
+        LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+        lp2.weight = 0;
+        paddingLayout.setLayoutParams(lp2);
+
         switch(type){
             case "shirt":
                 switch(style){
                     case "dress-shirt":
                         shirt.setImageResource(R.drawable.ic_dress_shirt);
-                        LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
                         lp1.weight=1.0f;
                         shirtLayout.setLayoutParams(lp1);
-                        LinearLayout.LayoutParams lp5 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
-                        lp5.weight=0f;
-                        paddingLayout.setLayoutParams(lp5);
                         break;
                     case "polo":
                         shirt.setImageResource(R.drawable.ic_polo);
-                        LinearLayout.LayoutParams lp4 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0);
-                        lp4.weight=1.2f;
-                        shirtLayout.setLayoutParams(lp4);
-                        LinearLayout.LayoutParams lp6 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
-                        lp6.weight=0f;
-                        paddingLayout.setLayoutParams(lp6);
+                        lp1.weight=1.2f;
+                        shirtLayout.setLayoutParams(lp1);
                         break;
                     case "t-shirt":
                         shirt.setImageResource(R.drawable.ic_shirt);
-                        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
-                        lp2.weight=1.1f;
-                        shirtLayout.setLayoutParams(lp2);
-                        LinearLayout.LayoutParams lp7 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
-                        lp7.weight=0f;
-                        paddingLayout.setLayoutParams(lp7);
+                        lp1.weight=1.0f;
+                        shirtLayout.setLayoutParams(lp1);
                         break;
                     case "hoodie":
-                        //change weight here
                         shirt.setImageResource(R.drawable.ic_hoodie);
-                        LinearLayout.LayoutParams lp3 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
-                        lp3.weight=1.2f;
-                        shirtLayout.setLayoutParams(lp3);
-                        LinearLayout.LayoutParams lp8 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
-                        lp8.weight=0f;
-                        paddingLayout.setLayoutParams(lp8);
+                        lp1.weight=1.2f;
+                        shirtLayout.setLayoutParams(lp1);
+                        break;
+                    case "woman-sleeveless-shirt":
+                        shirt.setImageResource(R.drawable.ic_woman_sleeveless_shirt);
+                        lp1.weight=0.95f;
+                        shirtLayout.setLayoutParams(lp1);
+                        break;
+                    case "blouse":
+                        shirt.setImageResource(R.drawable.ic_blouse);
+                        lp1.weight=1.2f;
+                        shirtLayout.setLayoutParams(lp1);
+                        break;
+                    case "man-coat":
+                        shirt.setImageResource(R.drawable.ic_man_coat);
+                        lp1.weight=1.2f;
+                        shirtLayout.setLayoutParams(lp1);
+                        break;
+                    case "man-suit":
+                        shirt.setImageResource(R.drawable.ic_man_suit);
+                        lp1.weight=1.25f;
+                        shirtLayout.setLayoutParams(lp1);
+                        break;
+                    case "woman-jacket":
+                        shirt.setImageResource(R.drawable.ic_woman_jacket);
+                        lp1.weight=1.3f;
+                        shirtLayout.setLayoutParams(lp1);
+                        break;
+                    case "woman-suit":
+                        shirt.setImageResource(R.drawable.ic_woman_suit);
+                        lp1.weight=1.4f;
+                        shirtLayout.setLayoutParams(lp1);
                         break;
                 }
                 break;
+
             case "pant":
                 switch(style){
                     case "pants":
                         pant.setImageResource(R.drawable.ic_pant);
-                        LinearLayout.LayoutParams lpp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
-                        lpp.weight=1.25f;
-                        pantLayout.setLayoutParams(lpp);
-                        LinearLayout.LayoutParams lp5 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
-                        lp5.weight=0f;
-                        paddingLayout.setLayoutParams(lp5);
+                        lp1.weight=1.25f;
+                        pantLayout.setLayoutParams(lp1);
                         break;
                     case "shorts":
                         pant.setImageResource(R.drawable.ic_shorts);
-                        LinearLayout.LayoutParams lp3 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
-                        lp3.weight=0.7f;
-                        pantLayout.setLayoutParams(lp3);
-                        LinearLayout.LayoutParams lp4 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
-                        lp4.weight=0f;
-                        paddingLayout.setLayoutParams(lp4);
+                        lp1.weight=0.7f;
+                        pantLayout.setLayoutParams(lp1);
+                        break;
+                    case "formal-pants":
+                        pant.setImageResource(R.drawable.ic_formal_pants);
+                        lp1.weight=1.25f;
+                        pantLayout.setLayoutParams(lp1);
+                        break;
+                    case "woman-pants":
+                        pant.setImageResource(R.drawable.ic_woman_pants);
+                        lp1.weight=1.2f;
+                        pantLayout.setLayoutParams(lp1);
+                        break;
+                    case "skirt":
+                        pant.setImageResource(R.drawable.ic_skirt);
+                        lp1.weight=0.9f;
+                        pantLayout.setLayoutParams(lp1);
+                        break;
+                    case "long-skirt":
+                        pant.setImageResource(R.drawable.ic_long_skirt);
+                        lp1.weight=1.25f;
+                        pantLayout.setLayoutParams(lp1);
+                        break;
+                    case "formal-skirt":
+                        pant.setImageResource(R.drawable.ic_formal_skirt);
+                        lp1.weight=1.1f;
+                        pantLayout.setLayoutParams(lp1);
                         break;
                 }
                 break;

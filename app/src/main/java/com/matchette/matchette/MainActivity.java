@@ -3,30 +3,26 @@ package com.matchette.matchette;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.FragmentTransaction;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.flask.colorpicker.OnColorSelectedListener;
-import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
-//import com.skydoves.colorpickerpreference.ColorEnvelope;
-//import com.skydoves.colorpickerpreference.ColorListener;
 import com.flask.colorpicker.ColorPickerView;
+import com.flask.colorpicker.OnColorSelectedListener;
 
 import java.util.ArrayList;
 import java.util.List;
+
+//import com.skydoves.colorpickerpreference.ColorEnvelope;
+//import com.skydoves.colorpickerpreference.ColorListener;
 
 public class MainActivity extends Activity {
 
@@ -247,6 +243,23 @@ public class MainActivity extends Activity {
         style = new Style("polo", R.drawable.ic_polo);
         shirtStyleList.add(style);
 
+        style = new Style("woman-sleeveless-shirt", R.drawable.ic_woman_sleeveless_shirt);
+        shirtStyleList.add(style);
+
+        style = new Style("blouse", R.drawable.ic_blouse); // 1.2 from here
+        shirtStyleList.add(style);
+
+        style = new Style("man-coat", R.drawable.ic_man_coat);
+        shirtStyleList.add(style);
+
+        style = new Style("man-suit", R.drawable.ic_man_suit);
+        shirtStyleList.add(style);
+
+        style = new Style("woman-jacket", R.drawable.ic_woman_jacket);
+        shirtStyleList.add(style);
+
+        style = new Style("woman-suit", R.drawable.ic_woman_suit); //1.3
+        shirtStyleList.add(style);
     }
 
     private void preparePantsStyles() {
@@ -255,44 +268,21 @@ public class MainActivity extends Activity {
 
         style = new Style("shorts", R.drawable.ic_shorts);
         pantsStyleList.add(style);
+
+        style = new Style("formal-pants", R.drawable.ic_formal_pants);
+        pantsStyleList.add(style);
+
+        style = new Style("woman-pants", R.drawable.ic_woman_pants); // trousers + 0.1
+        pantsStyleList.add(style);
+
+        style = new Style("skirt", R.drawable.ic_skirt); // shorts + 0.2
+        pantsStyleList.add(style);
+
+        style = new Style("long-skirt", R.drawable.ic_long_skirt); // trousers
+        pantsStyleList.add(style);
+
+        style = new Style("formal-skirt", R.drawable.ic_formal_skirt); // trousers
+        pantsStyleList.add(style);
     }
-
-
-
-    //    //Implement custom animation
-//    /**
-//     * Shows the custom snackbar with animation.
-//     *
-//     * @param l is the LinearLayout you want to be visible.
-//     */
-//    public void show_layout(LinearLayout l) {
-//        final int screenHeight = getScreenHeight();
-//        ObjectAnimator animator = ObjectAnimator.ofFloat(l, "y", screenHeight, (screenHeight * 0.619F));
-//        animator.setInterpolator(new DecelerateInterpolator());
-//        animator.setStartDelay(0);
-//        animator.start();
-//    }
-//
-//    /**
-//     * Hides the custom snackbar with animation.
-//     *
-//     * @param l is the LinearLayout you want to be hidden.
-//     */
-//    public void hide_layout(LinearLayout l) {
-//        final int screenHeight = getScreenHeight();
-//        ObjectAnimator animator = ObjectAnimator.ofFloat(l, "y", screenHeight);
-//        animator.setInterpolator(new DecelerateInterpolator());
-//        animator.setStartDelay(0);
-//        animator.start();
-//    }
-//    /**
-//     //     * Gets the screen height.
-//     //     * @return The screen height as an int.
-//     //     */
-//    public int getScreenHeight() {
-//        DisplayMetrics displaymetrics = new DisplayMetrics();
-//        this.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-//        return displaymetrics.heightPixels;
-//    }
 }
 
