@@ -3,7 +3,16 @@ package com.matchette.matchette;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +27,11 @@ import android.widget.Toast;
 import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 //import com.skydoves.colorpickerpreference.ColorEnvelope;
@@ -178,6 +191,52 @@ public class MainActivity extends Activity {
             }
         });
 
+        //Share button:
+        final ImageButton shareButton = findViewById(R.id.shareButton);
+        shareButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+               Bitmap sharableBitmap = getBitmapFromView(frame);
+               Log.d("BMP", "Bitmap grabbed");
+               File dir = getApplicationContext().getCacheDir();
+               Log.d("FileList", dir.listFiles().toString());
+               Log.d("FileList", dir.listFiles().getClass().toString());
+                if (dir.isDirectory()) {
+                    Log.d("Delete", "Deleting in progress");
+                    getApplicationContext().deleteFile("image.png");
+                    Log.d("Delete", "deletion attempted");
+                }
+                try {
+                    File cachePath = new File(getApplicationContext().getCacheDir(), "images");
+                    cachePath.mkdirs(); // don't forget to make the directory
+                    FileOutputStream stream = new FileOutputStream(cachePath + "/image.png");
+                    sharableBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    stream.close();
+                    Log.d("FileProvider", "File provider worked.");
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                File imagePath = new File(getApplicationContext().getCacheDir(), "images");
+                //Log.d("File", "got file path.");
+                File newFile = new File(imagePath, "image.png");
+                //Log.d("File", "Got file.");
+                Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), "com.matchette.matchette.fileprovider", newFile);
+                //Log.d("File", "Got URI");
+
+                if (contentUri != null) {
+                    Intent shareIntent = new Intent();
+                    shareIntent.setAction(Intent.ACTION_SEND);
+                    shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // temp permission for receiving app to read this file
+                    shareIntent.setDataAndType(contentUri, getContentResolver().getType(contentUri));
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+                    startActivity(Intent.createChooser(shareIntent, "Choose an app"));
+                }
+
+            }
+        });
+
         mainFragment = new MainActivityFragment();
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.add(R.id.fragment, mainFragment);
@@ -284,5 +343,30 @@ public class MainActivity extends Activity {
         style = new Style("formal-skirt", R.drawable.ic_formal_skirt); // trousers
         pantsStyleList.add(style);
     }
+
+    /**
+     * Turns a view in to a bitmap
+     * @param view
+     * @return The view as a bitmap
+     */
+    public static Bitmap getBitmapFromView(View view) {
+        //Define a bitmap with the same size as the view
+        Bitmap returnedBitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(),Bitmap.Config.ARGB_8888);
+        //Bind a canvas to it
+        Canvas canvas = new Canvas(returnedBitmap);
+        //Get the view's background
+        Drawable bgDrawable =view.getBackground();
+        if (bgDrawable!=null)
+            //has background drawable, then draw it on the canvas
+            bgDrawable.draw(canvas);
+        else
+            //does not have background drawable, then draw white background on the canvas
+            canvas.drawColor(Color.WHITE);
+        // draw the view on the canvas
+        view.draw(canvas);
+        //return the bitmap
+        return returnedBitmap;
+    }
+
 }
 
