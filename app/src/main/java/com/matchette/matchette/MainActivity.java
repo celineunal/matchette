@@ -1,10 +1,14 @@
 package com.matchette.matchette;
 
+import android.Manifest;
 import android.animation.LayoutTransition;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -12,6 +16,10 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,6 +48,7 @@ import java.util.List;
 public class MainActivity extends Activity {
 
     private LinearLayout snackBar;
+    private FrameLayout frame;
     private int count = 0;
     String [] shirts;
     String [] pants;
@@ -49,6 +58,8 @@ public class MainActivity extends Activity {
 
     String currShirt = "t-shirt";
     String currPant = "pants";
+
+    private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
 
     //For the recyclerView
     private List<Style> shirtStyleList = new ArrayList<>();
@@ -80,7 +91,7 @@ public class MainActivity extends Activity {
         transitioner1.setStartDelay(LayoutTransition.CHANGE_APPEARING, 0);
         transitioner1.setStartDelay(LayoutTransition.CHANGING, 0);
 
-        final FrameLayout frame = findViewById(R.id.temporary_frame);
+        frame = this.findViewById(R.id.temporary_frame);
         LayoutTransition transitioner2 = frame.getLayoutTransition();
         transitioner2.setStartDelay(LayoutTransition.CHANGE_DISAPPEARING, 0);
         transitioner2.setStartDelay(LayoutTransition.APPEARING, 0);
@@ -197,14 +208,14 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
                Bitmap sharableBitmap = getBitmapFromView(frame);
-               Log.d("BMP", "Bitmap grabbed");
+               //Log.d("BMP", "Bitmap grabbed");
                File dir = getApplicationContext().getCacheDir();
-               Log.d("FileList", dir.listFiles().toString());
-               Log.d("FileList", dir.listFiles().getClass().toString());
+               //Log.d("FileList", dir.listFiles().toString());
+               //Log.d("FileList", dir.listFiles().getClass().toString());
                 if (dir.isDirectory()) {
-                    Log.d("Delete", "Deleting in progress");
+                    //Log.d("Delete", "Deleting in progress");
                     getApplicationContext().deleteFile("image.png");
-                    Log.d("Delete", "deletion attempted");
+                    //Log.d("Delete", "deletion attempted");
                 }
                 try {
                     File cachePath = new File(getApplicationContext().getCacheDir(), "images");
@@ -212,7 +223,7 @@ public class MainActivity extends Activity {
                     FileOutputStream stream = new FileOutputStream(cachePath + "/image.png");
                     sharableBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     stream.close();
-                    Log.d("FileProvider", "File provider worked.");
+                    //Log.d("FileProvider", "File provider worked.");
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -237,12 +248,94 @@ public class MainActivity extends Activity {
             }
         });
 
+        final ImageButton saveButton = findViewById(R.id.saveButton);
+        saveButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if (ContextCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    Log.d("SaveButton", "Permission not granted is active");
+                    // Permission is not granted
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        // Show an explanation to the user *asynchronously* -- don't block
+                        // this thread waiting for the user's response! After the user
+                        // sees the explanation, try again to request the permission.
+                        Log.d("SaveButton", "Should show a dialog");
+                        // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+                        builder.setPositiveButton(R.string.alertDialogOkay, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User clicked OK button
+                                ActivityCompat.requestPermissions(MainActivity.this,
+                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
+                                );
+                            }
+                        });
+                        builder.setNegativeButton(R.string.alertDialogCancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                                Toast.makeText(getApplicationContext(), R.string.cantSave, Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+                        // 2. Chain together various setter methods to set the dialog characteristics
+                        builder.setMessage(R.string.alertDialogMessage);
+
+                        // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+
+                    } else {
+                        // No explanation needed; request the permission
+                        ActivityCompat.requestPermissions(MainActivity.this,
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
+                                );
+                        Log.d("SaveButton", "should request permission");
+                    }
+                } else {
+                    Bitmap bmp = getBitmapFromView(frame);
+                    saveImage(bmp);
+                    Toast.makeText(getApplicationContext(), R.string.saved, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         mainFragment = new MainActivityFragment();
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.add(R.id.fragment, mainFragment);
         ft.commit();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE : {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Bitmap bmp = getBitmapFromView(frame);
+                    saveImage(bmp);
+                    Toast.makeText(getApplicationContext(), R.string.saved, Toast.LENGTH_SHORT).show();
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(getApplicationContext(), R.string.cantSave, Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
 
     protected void animationLogicShirt(){
         currSnackbarSelection = "shirt";
@@ -368,5 +461,19 @@ public class MainActivity extends Activity {
         return returnedBitmap;
     }
 
+    public static void saveImage(Bitmap bmp) {
+        String filename = "matchette" + System.currentTimeMillis() + ".png";
+        File sd = Environment.getExternalStorageDirectory();
+        File dest = new File(sd, filename);
+
+        try {
+            FileOutputStream out = new FileOutputStream(dest);
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
 

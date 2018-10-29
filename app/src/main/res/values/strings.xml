@@ -5,4 +5,9 @@
     <string name="shirt">Shirt</string>
     <string name="pants">Pants</string>
     <string name="done">Done</string>
+    <string name="saved">Outfit saved to storage.</string>
+    <string name="alertDialogOkay">Okay</string>
+    <string name="alertDialogCancel">Cancel</string>
+    <string name="alertDialogMessage">We need the storage permission to save outfits to storage.</string>
+    <string name="cantSave">We couldn\'t save the outfit due to missing permissions.</string>
 </resources>
