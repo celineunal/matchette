@@ -5,7 +5,7 @@ import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
-import android.content.Context;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,11 +13,11 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.Settings;
-import android.support.design.widget.Snackbar;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -39,7 +39,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 //import com.skydoves.colorpickerpreference.ColorEnvelope;
@@ -308,6 +307,24 @@ public class MainActivity extends Activity {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.add(R.id.fragment, mainFragment);
         ft.commit();
+
+        // Camera button that opens the camera
+        final ImageButton cameraButton = findViewById(R.id.cameraButton);
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivity(intent);
+                }
+
+                catch(ActivityNotFoundException anfe){
+                    //display an error message
+                    String errorMessage = "Capturing image not supported";
+                    Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override
@@ -461,19 +478,36 @@ public class MainActivity extends Activity {
         return returnedBitmap;
     }
 
-    public static void saveImage(Bitmap bmp) {
+    /**
+     * Save image to a folder named Matchette in gallery
+     * @param bmp
+     */
+    public void saveImage(Bitmap bmp) {
+        String folderName = "/Matchette";
         String filename = "matchette" + System.currentTimeMillis() + ".png";
-        File sd = Environment.getExternalStorageDirectory();
-        File dest = new File(sd, filename);
+        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + folderName;
+        File file = new File(filePath);
+        if (!file.exists())
+            file.mkdirs();
+        File dest = new File(file, filename);
 
         try {
             FileOutputStream out = new FileOutputStream(dest);
             bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.flush();
             out.close();
+            MediaScannerConnection.scanFile(this, new String[]{dest.toString()},
+                    null, new MediaScannerConnection.OnScanCompletedListener() {
+                        @Override
+                        public void onScanCompleted(String s, Uri uri) {
+                            Log.e("ExternalStorage", "Scanned" + s + ":");
+                            Log.e("ExternalStorage", "-> uri=" + uri);
+                        }
+                    });
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 }
 

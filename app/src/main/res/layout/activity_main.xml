@@ -99,74 +99,95 @@
             android:id="@+id/custom_snackbar"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="4"
+            android:layout_weight="5"
             android:animateLayoutChanges="true"
             android:background="@color/primary_dark"
-            android:orientation="vertical"
+            android:elevation="15dp"
+            android:orientation="horizontal"
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
-            android:elevation="15dp"
             android:visibility="gone">
 
-            <LinearLayout
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="top"
-                android:layout_weight="10"
-                android:orientation="horizontal">
+                android:layout_height="match_parent"
+                android:layout_weight="1.1"
+                android:padding="20dp"
+                android:scrollbarAlwaysDrawVerticalTrack="true"
+                android:scrollbars="vertical" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_view"
-                    android:scrollbars="vertical"
-                    android:scrollbarAlwaysDrawVerticalTrack="true"
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="20dp"/>
+            <LinearLayout
+                android:id="@+id/color_choosing"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/manual_color"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="15"
+                    android:orientation="horizontal"
+                    android:padding="5dp"
+                    android:paddingRight="10dp">
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:gravity="end"
-                        android:padding="5dp"
-                        android:paddingRight="10dp">
+                        android:id="@+id/color_picker"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="15"
+                        android:orientation="vertical">
 
-                        <ImageButton
-                            android:id="@+id/closeSnackbar"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:background="@null"
-                            android:src="@drawable/close" />
+                        <com.flask.colorpicker.ColorPickerView
+                            android:id="@+id/colorPickerView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            app:alphaSliderView="@+id/v_alpha_slider"
+                            app:density="12"
+                            app:lightnessSlider="true"
+                            app:lightnessSliderView="@+id/v_lightness_slider"
+                            app:wheelType="FLOWER" />
+
+                        <com.flask.colorpicker.slider.LightnessSlider
+                            android:id="@+id/v_lightness_slider"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
                     </LinearLayout>
 
-                    <com.flask.colorpicker.ColorPickerView
-                        android:id="@+id/colorPickerView"
-                        android:layout_gravity="center"
-                        android:layout_weight="7"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        app:density="12"
-                        app:lightnessSlider="true"
-                        app:wheelType="FLOWER"
-                        app:lightnessSliderView="@+id/v_lightness_slider"
-                        app:alphaSliderView="@+id/v_alpha_slider"
-                        />
-
-                    <com.flask.colorpicker.slider.LightnessSlider
-                        android:layout_weight="2"
-                        android:id="@+id/v_lightness_slider"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        />
-
+                    <ImageButton
+                        android:id="@+id/closeSnackbar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:src="@drawable/close" />
                 </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/cameraButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginRight="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:src="@drawable/ic_photo_camera"
+                    android:background="@drawable/button_rounded"/>
+
+                <!--<android.support.design.button.MaterialButton-->
+                <!--android:id="@+id/cameraButton"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginRight="3dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:background="@color/accent"-->
+                <!--android:text="@string/open_camera"-->
+                <!--app:icon="@drawable/ic_photo_camera"-->
+                <!--app:iconGravity="textStart"/>-->
+
 
             </LinearLayout>
 
@@ -175,3 +196,4 @@
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
+

@@ -43,7 +43,7 @@ public class MainActivityFragment extends android.app.Fragment {
                         changeColorUtil(color, "hoodie", type, 1);
                         break;
                     case "woman-sleeveless-shirt":
-                        changeColorUtil(color, "woman-sleeveless-shirt", type, 1);
+                        changeColorUtil(color, "woman-sleeveless-shirt", type, 4);
                         break;
                     case "blouse":
                         changeColorUtil(color, "blouse", type, 3);
