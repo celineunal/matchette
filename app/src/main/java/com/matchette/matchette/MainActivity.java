@@ -17,6 +17,7 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -24,8 +25,10 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -46,13 +49,9 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
+    //This is going to be the custom snackbar that is set to be GONE at creation.
     private LinearLayout snackBar;
     private FrameLayout frame;
-    private int count = 0;
-    String [] shirts;
-    String [] pants;
-    String currShirtColor;
-    String currPantColor;
     String currSnackbarSelection = "shirt";
 
     String currShirt = "t-shirt";
@@ -68,13 +67,8 @@ public class MainActivity extends Activity {
     private StyleAdapter sAdapter;
     private MainActivityFragment mainFragment;
 
-    protected String getCurrShirt(){
-        return this.currShirt;
-    }
+    private String shareFileName = "sharableImage.png";
 
-    protected String getCurrPant(){
-        return this.currPant;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,54 +77,19 @@ public class MainActivity extends Activity {
 
         // For animation when showing/hiding the snackbar so that it doesn't show white space.
         final LinearLayout wholeLayout = findViewById(R.id.whole_layout);
-        LayoutTransition transitioner1 = wholeLayout.getLayoutTransition();
-        transitioner1.setStartDelay(LayoutTransition.CHANGE_DISAPPEARING, 0);
-        transitioner1.setStartDelay(LayoutTransition.APPEARING, 0);
-        transitioner1.setStartDelay(LayoutTransition.DISAPPEARING, 0);
-        transitioner1.setStartDelay(LayoutTransition.CHANGE_APPEARING, 0);
-        transitioner1.setStartDelay(LayoutTransition.CHANGING, 0);
-
+        setStartDelayToZero(wholeLayout);
         frame = this.findViewById(R.id.temporary_frame);
-        LayoutTransition transitioner2 = frame.getLayoutTransition();
-        transitioner2.setStartDelay(LayoutTransition.CHANGE_DISAPPEARING, 0);
-        transitioner2.setStartDelay(LayoutTransition.APPEARING, 0);
-        transitioner2.setStartDelay(LayoutTransition.DISAPPEARING, 0);
-        transitioner2.setStartDelay(LayoutTransition.CHANGE_APPEARING, 0);
-        transitioner2.setStartDelay(LayoutTransition.CHANGING, 0);
-
-
-        //This is the custom snackbar that is set to be GONE at creation.
+        setStartDelayToZero(frame);
         snackBar = this.findViewById(R.id.custom_snackbar);
-
-        LayoutTransition transitioner3 = snackBar.getLayoutTransition();
-        transitioner3.setStartDelay(LayoutTransition.CHANGE_DISAPPEARING, 0);
-        transitioner3.setStartDelay(LayoutTransition.APPEARING, 0);
-        transitioner3.setStartDelay(LayoutTransition.DISAPPEARING, 0);
-        transitioner3.setStartDelay(LayoutTransition.CHANGE_APPEARING, 0);
-        transitioner3.setStartDelay(LayoutTransition.CHANGING, 0);
-
-
-        final ImageButton closeSnackbar = findViewById(R.id.closeSnackbar);
-        final ColorPickerView colorPicker = findViewById(R.id.colorPickerView);
-
+        setStartDelayToZero(snackBar);
 
         // Set the swipe behavior (check out the OnSwipeTouchListener class).
-
-        /* I commented out the swiping up function. When the app is just opened and neither shirt nor pants are clicked on yet,
-         * there would be a blank space in the snackbar where the recycler view should be, if the snackbar was swiped up. */
-
         wholeLayout.setOnTouchListener(new OnSwipeTouchListener(this) {
             @Override
             public void onSwipeDown() {
-                snackBar.setVisibility(LinearLayout.GONE);
-            }
-
-            @Override
-            public void onSwipeUp() {
-//                snackBar.setVisibility(LinearLayout.VISIBLE);
+                hideSnackbar();
             }
         });
-
 
         // RecyclerView
         recyclerView = findViewById(R.id.recycler_view);
@@ -162,16 +121,18 @@ public class MainActivity extends Activity {
         }));
 
         //Set the closeSnackbar behavior.
+        final ImageButton closeSnackbar = findViewById(R.id.closeSnackbar);
         closeSnackbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (snackBar.getVisibility() != LinearLayout.GONE) {
-                    snackBar.setVisibility(LinearLayout.GONE);
+                    hideSnackbar();
                 }
 
             }
         });
 
+        final ColorPickerView colorPicker = findViewById(R.id.colorPickerView);
         colorPicker.addOnColorSelectedListener(new OnColorSelectedListener() {
             @Override
             public void onColorSelected(int i) {
@@ -206,44 +167,19 @@ public class MainActivity extends Activity {
         shareButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-               Bitmap sharableBitmap = getBitmapFromView(frame);
+                Bitmap sharableBitmap = getBitmapFromView(frame);
                //Log.d("BMP", "Bitmap grabbed");
-               File dir = getApplicationContext().getCacheDir();
-               //Log.d("FileList", dir.listFiles().toString());
-               //Log.d("FileList", dir.listFiles().getClass().toString());
-                if (dir.isDirectory()) {
-                    //Log.d("Delete", "Deleting in progress");
-                    getApplicationContext().deleteFile("image.png");
-                    //Log.d("Delete", "deletion attempted");
-                }
-                try {
-                    File cachePath = new File(getApplicationContext().getCacheDir(), "images");
-                    cachePath.mkdirs(); // don't forget to make the directory
-                    FileOutputStream stream = new FileOutputStream(cachePath + "/image.png");
-                    sharableBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    stream.close();
-                    //Log.d("FileProvider", "File provider worked.");
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                File dir = getApplicationContext().getCacheDir();
+                deleteFile(dir, shareFileName);
+                saveImageToCache(sharableBitmap, shareFileName);
 
                 File imagePath = new File(getApplicationContext().getCacheDir(), "images");
                 //Log.d("File", "got file path.");
-                File newFile = new File(imagePath, "image.png");
+                File newFile = new File(imagePath, shareFileName);
                 //Log.d("File", "Got file.");
                 Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), "com.matchette.matchette.fileprovider", newFile);
                 //Log.d("File", "Got URI");
-
-                if (contentUri != null) {
-                    Intent shareIntent = new Intent();
-                    shareIntent.setAction(Intent.ACTION_SEND);
-                    shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // temp permission for receiving app to read this file
-                    shareIntent.setDataAndType(contentUri, getContentResolver().getType(contentUri));
-                    shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-                    startActivity(Intent.createChooser(shareIntent, "Choose an app"));
-                }
-
+                shareFromUri(contentUri);
             }
         });
 
@@ -263,17 +199,17 @@ public class MainActivity extends Activity {
                         // this thread waiting for the user's response! After the user
                         // sees the explanation, try again to request the permission.
                         Log.d("SaveButton", "Should show a dialog");
-                        // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
+
+                        // 1. Instantiate an AlertDialog.Builder with its constructor
                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 
                         builder.setPositiveButton(R.string.alertDialogOkay, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 // User clicked OK button
-                                ActivityCompat.requestPermissions(MainActivity.this,
-                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
-                                );
+                                requestStoragePermission();
                             }
                         });
+
                         builder.setNegativeButton(R.string.alertDialogCancel, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 // User cancelled the dialog
@@ -284,15 +220,12 @@ public class MainActivity extends Activity {
                         // 2. Chain together various setter methods to set the dialog characteristics
                         builder.setMessage(R.string.alertDialogMessage);
 
-                        // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
                         AlertDialog dialog = builder.create();
                         dialog.show();
 
                     } else {
                         // No explanation needed; request the permission
-                        ActivityCompat.requestPermissions(MainActivity.this,
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
-                                );
+                        requestStoragePermission();
                         Log.d("SaveButton", "should request permission");
                     }
                 } else {
@@ -348,9 +281,6 @@ public class MainActivity extends Activity {
                 }
                 return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 
@@ -369,6 +299,9 @@ public class MainActivity extends Activity {
         }
     }
 
+    /**
+     *
+     */
     protected void animationLogicPant(){
         currSnackbarSelection = "pant";
         if (currentItemList == pantsStyleList && snackBar.getVisibility()==LinearLayout.GONE)
@@ -482,7 +415,7 @@ public class MainActivity extends Activity {
      * Save image to a folder named Matchette in gallery
      * @param bmp
      */
-    public void saveImage(Bitmap bmp) {
+    private void saveImage(Bitmap bmp) {
         String folderName = "/Matchette";
         String filename = "matchette" + System.currentTimeMillis() + ".png";
         String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + folderName;
@@ -509,5 +442,82 @@ public class MainActivity extends Activity {
         }
 
     }
+
+    /**
+     * Saves an image to cache (so it doesn't need storage permission)
+     * @param bitmap Bitmap to be saved.
+     * @param name Name of the file.
+     */
+    private void saveImageToCache(Bitmap bitmap, String name){
+        try {
+            File cachePath = new File(getApplicationContext().getCacheDir(), "images");
+            cachePath.mkdirs(); // don't forget to make the directory
+            FileOutputStream stream = new FileOutputStream(cachePath + "/" + name);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            stream.close();
+            //Log.d("FileProvider", "File provider worked.");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Sets the various start delays to 0 for automatic animation in layout changes.
+     * @param viewGroup is the viewgroup you want the transition of to be set to zero.
+     */
+    private void setStartDelayToZero(ViewGroup viewGroup){
+        LayoutTransition transitioner = viewGroup.getLayoutTransition();
+        transitioner.setStartDelay(LayoutTransition.CHANGE_DISAPPEARING, 0);
+        transitioner.setStartDelay(LayoutTransition.APPEARING, 0);
+        transitioner.setStartDelay(LayoutTransition.DISAPPEARING, 0);
+        transitioner.setStartDelay(LayoutTransition.CHANGE_APPEARING, 0);
+        transitioner.setStartDelay(LayoutTransition.CHANGING, 0);
+    }
+
+    /**
+     * Hides the snackbar. Public because we might have to call it from the fragment class as well.
+     */
+    public void hideSnackbar(){
+        snackBar.setVisibility(View.GONE);
+    }
+
+    /**
+     * Shares whatever the uri points to.
+     * @param uri The uri of the sharable. In our case that is the bitmap grabbed from the frame.
+     */
+    private void shareFromUri(Uri uri){
+        if (uri != null) {
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // temp permission for receiving app to read this file
+            shareIntent.setDataAndType(uri, getContentResolver().getType(uri));
+            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+            startActivity(Intent.createChooser(shareIntent, "Choose an app"));
+        }
+    }
+
+    /**
+     * Deletes a file.
+     * @param file The directory of the file to be deleted.
+     * @param filename The name of the file to be deleted.
+     */
+    private void deleteFile(File file, String filename){
+        if (file.isDirectory()) {
+            //Log.d("Delete", "Deleting in progress");
+            getApplicationContext().deleteFile(filename);
+            //Log.d("Delete", "deletion attempted");
+        }
+    }
+
+    /**
+     * Requests the WRITE_EXTERNAL_STORAGE permission.
+     */
+    private void requestStoragePermission(){
+        ActivityCompat.requestPermissions(MainActivity.this,
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
+        );
+    }
+
 }
 
