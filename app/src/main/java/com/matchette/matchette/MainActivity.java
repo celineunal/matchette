@@ -10,14 +10,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -25,7 +19,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,8 +32,6 @@ import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -167,11 +158,12 @@ public class MainActivity extends Activity {
         shareButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                Bitmap sharableBitmap = getBitmapFromView(frame);
+                Save save = new Save();
+                Bitmap sharableBitmap = save.getBitmapFromView(frame);
                //Log.d("BMP", "Bitmap grabbed");
                 File dir = getApplicationContext().getCacheDir();
                 deleteFile(dir, shareFileName);
-                saveImageToCache(sharableBitmap, shareFileName);
+                save.saveImageToCache(sharableBitmap, shareFileName, getApplicationContext());
 
                 File imagePath = new File(getApplicationContext().getCacheDir(), "images");
                 //Log.d("File", "got file path.");
@@ -229,8 +221,9 @@ public class MainActivity extends Activity {
                         Log.d("SaveButton", "should request permission");
                     }
                 } else {
-                    Bitmap bmp = getBitmapFromView(frame);
-                    saveImage(bmp);
+                    Save save = new Save();
+                    Bitmap bmp = save.getBitmapFromView(frame);
+                    save.saveImage(bmp, getApplicationContext());
                     Toast.makeText(getApplicationContext(), R.string.saved, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -269,8 +262,9 @@ public class MainActivity extends Activity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    Bitmap bmp = getBitmapFromView(frame);
-                    saveImage(bmp);
+                    Save save = new Save();
+                    Bitmap bmp = save.getBitmapFromView(frame);
+                    save.saveImage(bmp, getApplicationContext());
                     Toast.makeText(getApplicationContext(), R.string.saved, Toast.LENGTH_SHORT).show();
 
                 } else {
@@ -387,80 +381,6 @@ public class MainActivity extends Activity {
         pantsStyleList.add(style);
     }
 
-    /**
-     * Turns a view in to a bitmap
-     * @param view
-     * @return The view as a bitmap
-     */
-    public static Bitmap getBitmapFromView(View view) {
-        //Define a bitmap with the same size as the view
-        Bitmap returnedBitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(),Bitmap.Config.ARGB_8888);
-        //Bind a canvas to it
-        Canvas canvas = new Canvas(returnedBitmap);
-        //Get the view's background
-        Drawable bgDrawable =view.getBackground();
-        if (bgDrawable!=null)
-            //has background drawable, then draw it on the canvas
-            bgDrawable.draw(canvas);
-        else
-            //does not have background drawable, then draw white background on the canvas
-            canvas.drawColor(Color.WHITE);
-        // draw the view on the canvas
-        view.draw(canvas);
-        //return the bitmap
-        return returnedBitmap;
-    }
-
-    /**
-     * Save image to a folder named Matchette in gallery
-     * @param bmp
-     */
-    private void saveImage(Bitmap bmp) {
-        String folderName = "/Matchette";
-        String filename = "matchette" + System.currentTimeMillis() + ".png";
-        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + folderName;
-        File file = new File(filePath);
-        if (!file.exists())
-            file.mkdirs();
-        File dest = new File(file, filename);
-
-        try {
-            FileOutputStream out = new FileOutputStream(dest);
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
-            out.flush();
-            out.close();
-            MediaScannerConnection.scanFile(this, new String[]{dest.toString()},
-                    null, new MediaScannerConnection.OnScanCompletedListener() {
-                        @Override
-                        public void onScanCompleted(String s, Uri uri) {
-                            Log.e("ExternalStorage", "Scanned" + s + ":");
-                            Log.e("ExternalStorage", "-> uri=" + uri);
-                        }
-                    });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
-     * Saves an image to cache (so it doesn't need storage permission)
-     * @param bitmap Bitmap to be saved.
-     * @param name Name of the file.
-     */
-    private void saveImageToCache(Bitmap bitmap, String name){
-        try {
-            File cachePath = new File(getApplicationContext().getCacheDir(), "images");
-            cachePath.mkdirs(); // don't forget to make the directory
-            FileOutputStream stream = new FileOutputStream(cachePath + "/" + name);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            stream.close();
-            //Log.d("FileProvider", "File provider worked.");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Sets the various start delays to 0 for automatic animation in layout changes.
