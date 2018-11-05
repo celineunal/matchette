@@ -47,6 +47,8 @@ public class MainActivity extends Activity {
 
     String currShirt = "t-shirt";
     String currPant = "pants";
+    String currShirtColor = "CCD1D9";
+    String currPantColor = "CCD1D9";
 
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
 
@@ -87,6 +89,7 @@ public class MainActivity extends Activity {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setScrollbarFadingEnabled(false); // always visible
 
         prepareShirtStyles();
         preparePantsStyles();
@@ -101,9 +104,11 @@ public class MainActivity extends Activity {
                 if (currSnackbarSelection.equals("shirt")){
                     currShirt = currentStyle.getName();
                     mainFragment.changeStyle("shirt", currentStyle.getName());
-                } else {
+                    mainFragment.changeColor(currShirtColor, "shirt", currentStyle.getName());
+                } else if (currSnackbarSelection.equals("pant")){
                     currPant = currentStyle.getName();
                     mainFragment.changeStyle("pant", currentStyle.getName());
+                    mainFragment.changeColor(currPantColor, "pant", currentStyle.getName());
                 }
             }
 
@@ -123,14 +128,17 @@ public class MainActivity extends Activity {
             }
         });
 
+
         final ColorPickerView colorPicker = findViewById(R.id.colorPickerView);
         colorPicker.addOnColorSelectedListener(new OnColorSelectedListener() {
             @Override
             public void onColorSelected(int i) {
                 if (currSnackbarSelection.equals("shirt")) {
-                    mainFragment.changeColor(Integer.toHexString(i).toUpperCase(), currSnackbarSelection, currShirt);
+                    currShirtColor = Integer.toHexString(i).toUpperCase();
+                    mainFragment.changeColor(currShirtColor, currSnackbarSelection, currShirt);
                 } else {
-                    mainFragment.changeColor(Integer.toHexString(i).toUpperCase(), currSnackbarSelection, currPant);
+                    currPantColor = Integer.toHexString(i).toUpperCase();
+                    mainFragment.changeColor(currPantColor, currSnackbarSelection, currPant);
                 }
             }
         });
@@ -327,11 +335,12 @@ public class MainActivity extends Activity {
     }
 
     private void prepareShirtStyles () {
-        Style style = new Style("t-shirt", R.drawable.ic_shirt);
+        Style style = new Style("t-shirt", R.drawable.ic_t_shirt);
         shirtStyleList.add(style);
 
-        style = new Style("dress-shirt", R.drawable.ic_dress_shirt);
-        shirtStyleList.add(style);
+        // would crash
+//        style = new Style("dress-shirt", R.drawable.ic_dress_shirt);
+//        shirtStyleList.add(style);
 
         style = new Style("hoodie", R.drawable.ic_hoodie);
         shirtStyleList.add(style);
@@ -342,7 +351,7 @@ public class MainActivity extends Activity {
         style = new Style("woman-sleeveless-shirt", R.drawable.ic_woman_sleeveless_shirt);
         shirtStyleList.add(style);
 
-        style = new Style("blouse", R.drawable.ic_blouse); // 1.2 from here
+        style = new Style("blouse", R.drawable.ic_blouse);
         shirtStyleList.add(style);
 
         style = new Style("man-coat", R.drawable.ic_man_coat);
@@ -354,7 +363,7 @@ public class MainActivity extends Activity {
         style = new Style("woman-jacket", R.drawable.ic_woman_jacket);
         shirtStyleList.add(style);
 
-        style = new Style("woman-suit", R.drawable.ic_woman_suit); //1.3
+        style = new Style("woman-suit", R.drawable.ic_woman_suit);
         shirtStyleList.add(style);
     }
 
@@ -368,16 +377,16 @@ public class MainActivity extends Activity {
         style = new Style("formal-pants", R.drawable.ic_formal_pants);
         pantsStyleList.add(style);
 
-        style = new Style("woman-pants", R.drawable.ic_woman_pants); // trousers + 0.1
+        style = new Style("woman-pants", R.drawable.ic_woman_pants);
         pantsStyleList.add(style);
 
-        style = new Style("skirt", R.drawable.ic_skirt); // shorts + 0.2
+        style = new Style("skirt", R.drawable.ic_skirt);
         pantsStyleList.add(style);
 
-        style = new Style("long-skirt", R.drawable.ic_long_skirt); // trousers
+        style = new Style("long-skirt", R.drawable.ic_long_skirt);
         pantsStyleList.add(style);
 
-        style = new Style("formal-skirt", R.drawable.ic_formal_skirt); // trousers
+        style = new Style("formal-skirt", R.drawable.ic_formal_skirt);
         pantsStyleList.add(style);
     }
 
