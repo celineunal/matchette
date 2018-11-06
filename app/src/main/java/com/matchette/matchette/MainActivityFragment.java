@@ -31,13 +31,13 @@ public class MainActivityFragment extends android.app.Fragment {
             case "shirt":
                 switch(style){
                     case "t-shirt":
-                        changeColorUtil(color, "t-shirt", type, 4);
+                        changeColorUtil(color, "t-shirt", type, 1);
                         break;
                     case "polo":
                         changeColorUtil(color, "polo", type, 1);
                         break;
                     case "dress-shirt":
-                        changeColorUtil(color, "dress-shirt", type, 5);
+                        changeColorUtil(color, "dress-shirt", type, 6);
                         break;
                     case "hoodie":
                         changeColorUtil(color, "hoodie", type, 1);

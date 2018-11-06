@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,10 +17,27 @@ import java.io.IOException;
 public class Save {
 
     /**
+     * Helper method to save a bitmap to a destination.
+     * @param bmp
+     * @param destination
+     */
+    private static void streamBitmapOutAsAFile(Bitmap bmp, File destination) {
+        try {
+            FileOutputStream out = new FileOutputStream(destination);
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.close();
+        }
+        catch (IOException ioe){
+            Log.d("FileOutputStream", "Stream failed");
+        }
+    }
+
+    /**
      * Save image to a folder named Matchette in gallery
      * @param bmp
      */
-    public void saveImage(Bitmap bmp, Context context) {
+    public static void saveImage(Bitmap bmp, Context context) {
         String folderName = "/Matchette";
         String filename = "matchette" + System.currentTimeMillis() + ".png";
         String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + folderName;
@@ -31,10 +47,7 @@ public class Save {
         File dest = new File(file, filename);
 
         try {
-            FileOutputStream out = new FileOutputStream(dest);
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
-            out.flush();
-            out.close();
+            streamBitmapOutAsAFile(bmp, dest);
             MediaScannerConnection.scanFile(context, new String[]{dest.toString()},
                     null, new MediaScannerConnection.OnScanCompletedListener() {
                         @Override
@@ -53,18 +66,12 @@ public class Save {
      * @param bitmap Bitmap to be saved.
      * @param name Name of the file.
      */
-    public void saveImageToCache(Bitmap bitmap, String name, Context context){
-        try {
-            File cachePath = new File(context.getCacheDir(), "images");
-            cachePath.mkdirs(); // don't forget to make the directory
-            FileOutputStream stream = new FileOutputStream(cachePath + "/" + name);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            stream.close();
-            //Log.d("FileProvider", "File provider worked.");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void saveImageToCache(Bitmap bitmap, String name, Context context){
+        File cachePath = new File(context.getCacheDir(), "images");
+        cachePath.mkdirs(); // don't forget to make the directory
+        File file = new File(cachePath, name);
+        streamBitmapOutAsAFile(bitmap, file);
+        //Log.d("FileProvider", "File provider worked.");
     }
 
 

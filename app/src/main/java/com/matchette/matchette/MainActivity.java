@@ -10,12 +10,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,7 +37,9 @@ import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 //import com.skydoves.colorpickerpreference.ColorEnvelope;
@@ -49,6 +56,7 @@ public class MainActivity extends Activity {
     String currPant = "pants";
 
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
+    private static final int REQUEST_TAKE_PHOTO = 1;
 
     //For the recyclerView
     private List<Style> shirtStyleList = new ArrayList<>();
@@ -127,6 +135,7 @@ public class MainActivity extends Activity {
         colorPicker.addOnColorSelectedListener(new OnColorSelectedListener() {
             @Override
             public void onColorSelected(int i) {
+                Log.d("Color", Integer.toHexString(i).toUpperCase());
                 if (currSnackbarSelection.equals("shirt")) {
                     mainFragment.changeColor(Integer.toHexString(i).toUpperCase(), currSnackbarSelection, currShirt);
                 } else {
@@ -221,9 +230,8 @@ public class MainActivity extends Activity {
                         Log.d("SaveButton", "should request permission");
                     }
                 } else {
-                    Save save = new Save();
-                    Bitmap bmp = save.getBitmapFromView(frame);
-                    save.saveImage(bmp, getApplicationContext());
+                    Bitmap bmp = Save.getBitmapFromView(frame);
+                    Save.saveImage(bmp, getApplicationContext());
                     Toast.makeText(getApplicationContext(), R.string.saved, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -239,16 +247,8 @@ public class MainActivity extends Activity {
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivity(intent);
-                }
-
-                catch(ActivityNotFoundException anfe){
-                    //display an error message
-                    String errorMessage = "Capturing image not supported";
-                    Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
-                }
+                Log.d("Camera", "Button tapped.");
+                getBitmapFromCamera();
             }
         });
     }
@@ -262,9 +262,8 @@ public class MainActivity extends Activity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    Save save = new Save();
-                    Bitmap bmp = save.getBitmapFromView(frame);
-                    save.saveImage(bmp, getApplicationContext());
+                    Bitmap bmp = Save.getBitmapFromView(frame);
+                    Save.saveImage(bmp, getApplicationContext());
                     Toast.makeText(getApplicationContext(), R.string.saved, Toast.LENGTH_SHORT).show();
 
                 } else {
@@ -275,6 +274,16 @@ public class MainActivity extends Activity {
                 }
                 return;
             }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
+            Bitmap colorPicture = (Bitmap) data.getExtras().get("data");//this is your bitmap image and now you can do whatever you want with this
+            Log.d("onActivityResult", "Grabbed bitmap from camera.");
+            createPaletteAsync(colorPicture);
         }
     }
 
@@ -437,6 +446,37 @@ public class MainActivity extends Activity {
         ActivityCompat.requestPermissions(MainActivity.this,
                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
         );
+    }
+
+    private void getBitmapFromCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+           startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.photoError, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Generate palette asynchronously and use it on a different
+// thread using onGenerated()
+    public void createPaletteAsync(Bitmap bitmap) {
+        Log.d("Async", "createPaletteAsync initialized");
+        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+            public void onGenerated(Palette p) {
+                Log.d("onGenerated", "onGenerated started.");
+                int domColor = p.getDominantColor(Color.parseColor("#CCD1D9"));
+                Log.d("domColor:", Integer.toString(domColor));
+                Log.d("Palette", "domColor grabbed");
+                String hexColor = Integer.toHexString(domColor).toUpperCase();
+                Log.d("domColor String:", hexColor);
+                if (currSnackbarSelection.equals("shirt")) {
+                    mainFragment.changeColor(hexColor, currSnackbarSelection, currShirt);
+                } else {
+                    mainFragment.changeColor(hexColor, currSnackbarSelection, currPant);
+                }
+
+            }
+        });
     }
 
 }
