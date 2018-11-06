@@ -115,7 +115,9 @@
                 android:layout_weight="1.1"
                 android:padding="20dp"
                 android:scrollbarAlwaysDrawVerticalTrack="true"
-                android:scrollbars="vertical" />
+                android:scrollbars="vertical"
+                android:scrollbarSize="5dp"
+                android:scrollbarThumbVertical="@drawable/scrollbar"/>
 
             <LinearLayout
                 android:id="@+id/color_choosing"

@@ -94,7 +94,7 @@ public class MainActivityFragment extends android.app.Fragment {
         int id = 0;
         switch(style){
             case "t-shirt":
-                id = R.drawable.ic_shirt;
+                id = R.drawable.ic_t_shirt;
                 break;
             case "polo":
                 id = R.drawable.ic_polo;
@@ -175,7 +175,7 @@ public class MainActivityFragment extends android.app.Fragment {
                         shirtLayout.setLayoutParams(lp1);
                         break;
                     case "t-shirt":
-                        shirt.setImageResource(R.drawable.ic_shirt);
+                        shirt.setImageResource(R.drawable.ic_t_shirt);
                         lp1.weight=1.0f;
                         shirtLayout.setLayoutParams(lp1);
                         break;
