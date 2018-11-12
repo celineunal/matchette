@@ -265,18 +265,6 @@ public class MainActivityFragment extends android.app.Fragment {
         super.onCreateView(inflater,container,savedInstanceState);
         fragment = inflater.inflate(R.layout.fragment_main, container, false);
 
-        //Tried to get the swiping work in the fragment, but no dice.
-/*
-        LinearLayout wholeFragment = fragment.findViewById(R.id.fragmentLayout);
-        wholeFragment.setOnTouchListener(new OnSwipeTouchListener(this.getContext()) {
-            @Override
-            public void onSwipeDown() {
-                ((MainActivity)getActivity()).hideSnackbar();
-            }
-
-        });
-*/
-
         pant = (ImageView) fragment.findViewById(R.id.pant);
         shirt = (ImageView) fragment.findViewById(R.id.shirt);
         shirtLayout = (LinearLayout) fragment.findViewById(R.id.shirtLayout);

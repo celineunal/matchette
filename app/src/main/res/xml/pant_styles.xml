@@ -1,0 +1,9 @@
+<resources>
+    <style num="1" name="pants">pants</style>
+    <style num="2" name="shorts">shorts</style>
+    <style num="1" name="formal-pants">formal-pants</style>
+    <style num="1" name="woman-pants">woman-pants</style>
+    <style num="1" name="skirt">skirt</style>
+    <style num="4" name="long-skirt">long-skirt</style>
+    <style num="2" name="formal-skirt">formal-skirt</style>
+</resources>

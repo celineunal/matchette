@@ -73,7 +73,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // For animation when showing/hiding the snackbar so that it doesn't show white space.
@@ -193,7 +193,26 @@ public class MainActivity extends Activity {
         });
 
         final ImageButton saveButton = findViewById(R.id.saveButton);
-        saveButton.setOnClickListener(new View.OnClickListener(){
+        saveButtonListener(saveButton);
+
+        mainFragment = new MainActivityFragment();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.add(R.id.fragment, mainFragment);
+        ft.commit();
+
+        // Camera button that opens the camera
+        final ImageButton cameraButton = findViewById(R.id.cameraButton);
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("Camera", "Button tapped.");
+                getBitmapFromCamera();
+            }
+        });
+    }
+
+    public void saveButtonListener(ImageButton btn){
+        btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 if (ContextCompat.checkSelfPermission(MainActivity.this,
@@ -242,21 +261,6 @@ public class MainActivity extends Activity {
                     Save.saveImage(bmp, getApplicationContext());
                     Toast.makeText(getApplicationContext(), R.string.saved, Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
-
-        mainFragment = new MainActivityFragment();
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.add(R.id.fragment, mainFragment);
-        ft.commit();
-
-        // Camera button that opens the camera
-        final ImageButton cameraButton = findViewById(R.id.cameraButton);
-        cameraButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d("Camera", "Button tapped.");
-                getBitmapFromCamera();
             }
         });
     }

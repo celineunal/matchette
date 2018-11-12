@@ -1,0 +1,11 @@
+<resources>
+    <style num="1" name="t-shirt">t-shirt</style>
+    <style num="1" name="hoodie">hoodie</style>
+    <style num="1" name="polo">polo</style>
+    <style num="4" name="woman-sleeveless-shirt">woman-sleeveless-shirt</style>
+    <style num="3" name="blouse">blouse</style>
+    <style num="4" name="man-coat">man-coat</style>
+    <style num="1" name="man-suit">man-suit</style>
+    <style num="4" name="woman-jacket">woman-jacket</style>
+    <style num="5" name="woman-suit">woman-suit</style>
+</resources>
