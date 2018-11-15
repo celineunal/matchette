@@ -5,26 +5,21 @@ import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
-import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -34,12 +29,11 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.flask.colorpicker.ColorPickerView;
+import com.flask.colorpicker.OnColorChangedListener;
 import com.flask.colorpicker.OnColorSelectedListener;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 //import com.skydoves.colorpickerpreference.ColorEnvelope;
@@ -76,7 +70,87 @@ public class MainActivity extends Activity {
          super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // For animation when showing/hiding the snackbar so that it doesn't show white space.
+        mainFragmentTransaction();
+
+        snackbarAnimation();
+        setCloseSnackbar();
+
+        createRecyclerView();
+        recyclerViewListener();
+
+        createColorPickerView();
+
+        createCustomButton();
+        createGalleryButton();
+        createShareButton();
+        createSaveButton();
+        createCameraButton();
+    }
+
+    private void createCameraButton() {
+        final ImageButton cameraButton = findViewById(R.id.cameraButton);
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getBitmapFromCamera();
+            }
+        });
+    }
+
+    private void mainFragmentTransaction() {
+        mainFragment = new MainActivityFragment();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.add(R.id.fragment, mainFragment);
+        ft.commit();
+    }
+
+    private void createCustomButton() {
+        final Button customButton = findViewById(R.id.custom_button);
+        customButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "Coming soon!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void createGalleryButton() {
+        final Button galleryButton = findViewById(R.id.gallery_button);
+        galleryButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "Coming soon!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void createShareButton() {
+        final ImageButton shareButton = findViewById(R.id.shareButton);
+        shareButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Bitmap sharableBitmap = Save.getBitmapFromView(frame);
+                File dir = getApplicationContext().getCacheDir();
+                deleteFile(dir, shareFileName);
+                Save.saveImageToCache(sharableBitmap, shareFileName, getApplicationContext());
+
+                File imagePath = new File(getApplicationContext().getCacheDir(), "images");
+                File newFile = new File(imagePath, shareFileName);
+                Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), "com.matchette.matchette.fileprovider", newFile);
+                shareFromUri(contentUri);
+            }
+        });
+    }
+
+    private void createSaveButton() {
+        final ImageButton saveButton = findViewById(R.id.saveButton);
+        saveButtonListener(saveButton);
+    }
+
+    /**
+     * For animation when showing/hiding the snackbar so that it doesn't show white space.
+     */
+    private void snackbarAnimation(){
         final LinearLayout wholeLayout = findViewById(R.id.whole_layout);
         setStartDelayToZero(wholeLayout);
         frame = this.findViewById(R.id.temporary_frame);
@@ -84,15 +158,28 @@ public class MainActivity extends Activity {
         snackBar = this.findViewById(R.id.custom_snackbar);
         setStartDelayToZero(snackBar);
 
-        // Set the swipe behavior (check out the OnSwipeTouchListener class).
+        // For swiping snackbar down
         wholeLayout.setOnTouchListener(new OnSwipeTouchListener(this) {
             @Override
             public void onSwipeDown() {
                 hideSnackbar();
             }
         });
+    }
 
-        // RecyclerView
+    private void setCloseSnackbar() {
+        final ImageButton closeSnackbar = findViewById(R.id.closeSnackbar);
+        closeSnackbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (snackBar.getVisibility() != LinearLayout.GONE) {
+                    hideSnackbar();
+                }
+            }
+        });
+    }
+
+    private void createRecyclerView(){
         recyclerView = findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -101,14 +188,13 @@ public class MainActivity extends Activity {
 
         prepareShirtStyles();
         preparePantsStyles();
+    }
 
-
-        // Listener for RecyclerView
+    private void recyclerViewListener(){
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 Style currentStyle = currentItemList.get(position);
-                Log.d("change", currSnackbarSelection + " | " + currentStyle.getName());
                 if (currSnackbarSelection.equals("shirt")){
                     currShirt = currentStyle.getName();
                     mainFragment.changeStyle("shirt", currentStyle.getName());
@@ -123,92 +209,33 @@ public class MainActivity extends Activity {
             @Override
             public void onLongClick(View view, int position) {}
         }));
+    }
 
-        //Set the closeSnackbar behavior.
-        final ImageButton closeSnackbar = findViewById(R.id.closeSnackbar);
-        closeSnackbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (snackBar.getVisibility() != LinearLayout.GONE) {
-                    hideSnackbar();
-                }
-
-            }
-        });
-
-
+    private void createColorPickerView() {
         final ColorPickerView colorPicker = findViewById(R.id.colorPickerView);
         colorPicker.addOnColorSelectedListener(new OnColorSelectedListener() {
             @Override
             public void onColorSelected(int i) {
-                Log.d("Color", Integer.toHexString(i).toUpperCase());
-                if (currSnackbarSelection.equals("shirt")) {
-                    currShirtColor = Integer.toHexString(i).toUpperCase();
-                    mainFragment.changeColor(currShirtColor, currSnackbarSelection, currShirt);
-                } else {
-                    currPantColor = Integer.toHexString(i).toUpperCase();
-                    mainFragment.changeColor(currPantColor, currSnackbarSelection, currPant);
-                }
+                changeStyleColor(i);
             }
         });
 
-
-        // Customize and gallery buttons
-        final Button customizeButton = findViewById(R.id.customize_button);
-        customizeButton.setOnClickListener(new View.OnClickListener(){
+        colorPicker.addOnColorChangedListener(new OnColorChangedListener() {
             @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Coming soon!", Toast.LENGTH_SHORT).show();
+            public void onColorChanged(int i) {
+                changeStyleColor(i);
             }
         });
+    }
 
-        final Button galleryButton = findViewById(R.id.gallery_button);
-        galleryButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Coming soon!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        //Share button:
-        final ImageButton shareButton = findViewById(R.id.shareButton);
-        shareButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                Save save = new Save();
-                Bitmap sharableBitmap = save.getBitmapFromView(frame);
-               //Log.d("BMP", "Bitmap grabbed");
-                File dir = getApplicationContext().getCacheDir();
-                deleteFile(dir, shareFileName);
-                save.saveImageToCache(sharableBitmap, shareFileName, getApplicationContext());
-
-                File imagePath = new File(getApplicationContext().getCacheDir(), "images");
-                //Log.d("File", "got file path.");
-                File newFile = new File(imagePath, shareFileName);
-                //Log.d("File", "Got file.");
-                Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), "com.matchette.matchette.fileprovider", newFile);
-                //Log.d("File", "Got URI");
-                shareFromUri(contentUri);
-            }
-        });
-
-        final ImageButton saveButton = findViewById(R.id.saveButton);
-        saveButtonListener(saveButton);
-
-        mainFragment = new MainActivityFragment();
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.add(R.id.fragment, mainFragment);
-        ft.commit();
-
-        // Camera button that opens the camera
-        final ImageButton cameraButton = findViewById(R.id.cameraButton);
-        cameraButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d("Camera", "Button tapped.");
-                getBitmapFromCamera();
-            }
-        });
+    private void changeStyleColor(int i){
+        if (currSnackbarSelection.equals("shirt")) {
+            currShirtColor = Integer.toHexString(i).toUpperCase();
+            mainFragment.changeColor(currShirtColor, currSnackbarSelection, currShirt);
+        } else {
+            currPantColor = Integer.toHexString(i).toUpperCase();
+            mainFragment.changeColor(currPantColor, currSnackbarSelection, currPant);
+        }
     }
 
     public void saveButtonListener(ImageButton btn){
@@ -218,51 +245,47 @@ public class MainActivity extends Activity {
                 if (ContextCompat.checkSelfPermission(MainActivity.this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
-                    Log.d("SaveButton", "Permission not granted is active");
                     // Permission is not granted
-                    // Should we show an explanation?
                     if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                         // Show an explanation to the user *asynchronously* -- don't block
                         // this thread waiting for the user's response! After the user
                         // sees the explanation, try again to request the permission.
-                        Log.d("SaveButton", "Should show a dialog");
+                        showAlertDialog();
 
-                        // 1. Instantiate an AlertDialog.Builder with its constructor
-                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    } else requestStoragePermission(); // No explanation needed; request the permission
 
-                        builder.setPositiveButton(R.string.alertDialogOkay, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User clicked OK button
-                                requestStoragePermission();
-                            }
-                        });
-
-                        builder.setNegativeButton(R.string.alertDialogCancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
-                                Toast.makeText(getApplicationContext(), R.string.cantSave, Toast.LENGTH_LONG).show();
-                            }
-                        });
-
-                        // 2. Chain together various setter methods to set the dialog characteristics
-                        builder.setMessage(R.string.alertDialogMessage);
-
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-
-                    } else {
-                        // No explanation needed; request the permission
-                        requestStoragePermission();
-                        Log.d("SaveButton", "should request permission");
-                    }
-                } else {
-                    Bitmap bmp = Save.getBitmapFromView(frame);
-                    Save.saveImage(bmp, getApplicationContext());
-                    Toast.makeText(getApplicationContext(), R.string.saved, Toast.LENGTH_SHORT).show();
-                }
+                } else showSavedMessage();
             }
         });
+    }
+
+    private void showAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+        // User clicked OK button
+        builder.setPositiveButton(R.string.alertDialogOkay, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                requestStoragePermission();
+            }
+        });
+
+        // User cancelled the dialog
+        builder.setNegativeButton(R.string.alertDialogCancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                Toast.makeText(getApplicationContext(), R.string.cantSave, Toast.LENGTH_LONG).show();
+            }
+        });
+
+        builder.setMessage(R.string.alertDialogMessage);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void showSavedMessage() {
+        Bitmap bmp = Save.getBitmapFromView(frame);
+        Save.saveImage(bmp, getApplicationContext());
+        Toast.makeText(getApplicationContext(), R.string.saved, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -271,19 +294,11 @@ public class MainActivity extends Activity {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE : {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    Bitmap bmp = Save.getBitmapFromView(frame);
-                    Save.saveImage(bmp, getApplicationContext());
-                    Toast.makeText(getApplicationContext(), R.string.saved, Toast.LENGTH_SHORT).show();
-
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    showSavedMessage();
+                else
+                    // permission denied
                     Toast.makeText(getApplicationContext(), R.string.cantSave, Toast.LENGTH_SHORT).show();
-                }
                 return;
             }
         }
@@ -294,56 +309,37 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
             Bitmap colorPicture = (Bitmap) data.getExtras().get("data");//this is your bitmap image and now you can do whatever you want with this
-            Log.d("onActivityResult", "Grabbed bitmap from camera.");
             createPaletteAsync(colorPicture);
         }
     }
 
     protected void animationLogicShirt(){
-        currSnackbarSelection = "shirt";
-        if (currentItemList == shirtStyleList && snackBar.getVisibility()==LinearLayout.GONE)
-            snackBar.setVisibility(LinearLayout.VISIBLE);
-        else if (currentItemList != shirtStyleList && snackBar.getVisibility()==LinearLayout.VISIBLE){
-            currentItemList = shirtStyleList;
-            recycShirt();
-        }
-        else if (currentItemList != shirtStyleList && snackBar.getVisibility()==LinearLayout.GONE){
-            currentItemList = shirtStyleList;
-            recycShirt();
-            snackBar.setVisibility(LinearLayout.VISIBLE);
-        }
+        animationLogicForTypes("shirt",shirtStyleList);
     }
 
-    /**
-     *
-     */
     protected void animationLogicPant(){
-        currSnackbarSelection = "pant";
-        if (currentItemList == pantsStyleList && snackBar.getVisibility()==LinearLayout.GONE)
-            snackBar.setVisibility(LinearLayout.VISIBLE);
-        else if (currentItemList != pantsStyleList && snackBar.getVisibility()==LinearLayout.VISIBLE){
-            currentItemList = pantsStyleList;
-            recycPants();
-        }
-        else if (currentItemList != pantsStyleList && snackBar.getVisibility()==LinearLayout.GONE){
-            currentItemList = pantsStyleList;
-            recycPants();
-            snackBar.setVisibility(LinearLayout.VISIBLE);
-        }
-    }
-    /**
-     * Set up the RecyclerView for shirts
-     */
-    private void recycShirt (){
-        sAdapter = new StyleAdapter(shirtStyleList);
-        recyclerView.setAdapter(sAdapter);
+        animationLogicForTypes("pant",pantsStyleList);
     }
 
-    /**
-     * Set up the RecyclerView for pants
-     */
-    private void recycPants (){
-        sAdapter = new StyleAdapter(pantsStyleList);
+    // Animation for a generic type in the recycler view
+    protected void animationLogicForTypes(String type, List styleList){
+        currSnackbarSelection = type;
+        if (currentItemList == styleList && snackBar.getVisibility()==LinearLayout.GONE)
+            snackBar.setVisibility(LinearLayout.VISIBLE);
+        else if (currentItemList != styleList && snackBar.getVisibility()==LinearLayout.VISIBLE){
+            currentItemList = styleList;
+            updateRecyclerView(styleList);
+        }
+        else if (currentItemList != styleList && snackBar.getVisibility()==LinearLayout.GONE){
+            currentItemList = styleList;
+            updateRecyclerView(styleList);
+            snackBar.setVisibility(LinearLayout.VISIBLE);
+        }
+    }
+
+    // Updating recycler view to switch between shirts and pants
+    private void updateRecyclerView(List styleList){
+        sAdapter = new StyleAdapter(styleList);
         recyclerView.setAdapter(sAdapter);
     }
 
@@ -446,9 +442,7 @@ public class MainActivity extends Activity {
      */
     private void deleteFile(File file, String filename){
         if (file.isDirectory()) {
-            //Log.d("Delete", "Deleting in progress");
             getApplicationContext().deleteFile(filename);
-            //Log.d("Delete", "deletion attempted");
         }
     }
 
@@ -473,21 +467,15 @@ public class MainActivity extends Activity {
     // Generate palette asynchronously and use it on a different
 // thread using onGenerated()
     public void createPaletteAsync(Bitmap bitmap) {
-        Log.d("Async", "createPaletteAsync initialized");
         Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
             public void onGenerated(Palette p) {
-                Log.d("onGenerated", "onGenerated started.");
                 int domColor = p.getDominantColor(Color.parseColor("#CCD1D9"));
-                Log.d("domColor:", Integer.toString(domColor));
-                Log.d("Palette", "domColor grabbed");
                 String hexColor = Integer.toHexString(domColor).toUpperCase();
-                Log.d("domColor String:", hexColor);
                 if (currSnackbarSelection.equals("shirt")) {
                     mainFragment.changeColor(hexColor, currSnackbarSelection, currShirt);
                 } else {
                     mainFragment.changeColor(hexColor, currSnackbarSelection, currPant);
                 }
-
             }
         });
     }

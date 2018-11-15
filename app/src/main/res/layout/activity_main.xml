@@ -26,7 +26,7 @@
             android:paddingRight="20dp">
 
             <android.support.design.button.MaterialButton
-                android:id="@+id/customize_button"
+                android:id="@+id/custom_button"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="5dp"
