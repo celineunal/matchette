@@ -5,11 +5,14 @@ import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,6 +23,7 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -32,7 +36,15 @@ import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorChangedListener;
 import com.flask.colorpicker.OnColorSelectedListener;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +53,6 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
-    //This is going to be the custom snackbar that is set to be GONE at creation.
     private LinearLayout snackBar;
     private FrameLayout frame;
     String currSnackbarSelection = "shirt";
@@ -75,7 +86,7 @@ public class MainActivity extends Activity {
         snackbarAnimation();
         setCloseSnackbar();
 
-        createRecyclerView();
+        createRecyclerView(getApplicationContext());
         recyclerViewListener();
 
         createColorPickerView();
@@ -179,15 +190,18 @@ public class MainActivity extends Activity {
         });
     }
 
-    private void createRecyclerView(){
+    private void createRecyclerView(Context context){
         recyclerView = findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setScrollbarFadingEnabled(false); // always visible
 
-        prepareShirtStyles();
-        preparePantsStyles();
+        shirtStyleList = loadStyleListFromXml("shirt_styles", context);
+        pantsStyleList = loadStyleListFromXml("pant_styles", context);
+
+        int poop = shirtStyleList.get(0).getRid();
+        Log.d("Rid", String.valueOf(poop));
     }
 
     private void recyclerViewListener(){
@@ -343,61 +357,93 @@ public class MainActivity extends Activity {
         recyclerView.setAdapter(sAdapter);
     }
 
+    private List<Style> loadStyleListFromXml(String filename, Context context){
+        InputStream stream = null;
+        // Instantiate the parser
+        StyleParser styleParser = new StyleParser();
+        List<Style> styles = null;
+
+        try {
+            AssetManager manager = getAssets();
+            Log.d("manager", manager.toString());
+            stream = manager.open(filename + ".xml");
+            Log.d("stream", stream.toString());
+            styles = styleParser.parse(stream, context);
+        } catch (FileNotFoundException fE){
+            Toast.makeText(context, "There was an error loading styles.", Toast.LENGTH_LONG);
+        } catch (XmlPullParserException xE) {
+            Toast.makeText(context, "There was an error parsing the styles file.", Toast.LENGTH_LONG);
+        } catch (IOException iE) {
+            Toast.makeText(context, "There was an error, I do not know what.", Toast.LENGTH_LONG);
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException iE) {
+                    Toast.makeText(context, "What is IOException anyway?", Toast.LENGTH_LONG);
+                }
+            }
+        }
+
+        return styles;
+    }
+
     private void prepareShirtStyles () {
-        Style style = new Style("t-shirt", R.drawable.ic_t_shirt);
+        Style style = new Style("t-shirt", R.drawable.ic_t_shirt, 1);
         shirtStyleList.add(style);
 
         // would crash
 //        style = new Style("dress-shirt", R.drawable.ic_dress_shirt);
 //        shirtStyleList.add(style);
 
-        style = new Style("hoodie", R.drawable.ic_hoodie);
+        style = new Style("hoodie", R.drawable.ic_hoodie, 1);
         shirtStyleList.add(style);
 
-        style = new Style("polo", R.drawable.ic_polo);
+        style = new Style("polo", R.drawable.ic_polo, 1);
         shirtStyleList.add(style);
 
-        style = new Style("woman-sleeveless-shirt", R.drawable.ic_woman_sleeveless_shirt);
+        style = new Style("woman-sleeveless-shirt", R.drawable.ic_woman_sleeveless_shirt, 1);
         shirtStyleList.add(style);
 
-        style = new Style("blouse", R.drawable.ic_blouse);
+        style = new Style("blouse", R.drawable.ic_blouse, 1);
         shirtStyleList.add(style);
 
-        style = new Style("man-coat", R.drawable.ic_man_coat);
+        style = new Style("man-coat", R.drawable.ic_man_coat, 1);
         shirtStyleList.add(style);
 
-        style = new Style("man-suit", R.drawable.ic_man_suit);
+        style = new Style("man-suit", R.drawable.ic_man_suit, 1);
         shirtStyleList.add(style);
 
-        style = new Style("woman-jacket", R.drawable.ic_woman_jacket);
+        style = new Style("woman-jacket", R.drawable.ic_woman_jacket, 1);
         shirtStyleList.add(style);
 
-        style = new Style("woman-suit", R.drawable.ic_woman_suit);
+        style = new Style("woman-suit", R.drawable.ic_woman_suit, 1);
         shirtStyleList.add(style);
     }
 
     private void preparePantsStyles() {
-        Style style = new Style("pants", R.drawable.ic_pant);
+        Style style = new Style("pants", R.drawable.ic_pant, 1);
         pantsStyleList.add(style);
 
-        style = new Style("shorts", R.drawable.ic_shorts);
+        style = new Style("shorts", R.drawable.ic_shorts, 1);
         pantsStyleList.add(style);
 
-        style = new Style("formal-pants", R.drawable.ic_formal_pants);
+        style = new Style("formal-pants", R.drawable.ic_formal_pants, 1);
         pantsStyleList.add(style);
 
-        style = new Style("woman-pants", R.drawable.ic_woman_pants);
+        style = new Style("woman-pants", R.drawable.ic_woman_pants,1 );
         pantsStyleList.add(style);
 
-        style = new Style("skirt", R.drawable.ic_skirt);
+        style = new Style("skirt", R.drawable.ic_skirt, 1);
         pantsStyleList.add(style);
 
-        style = new Style("long-skirt", R.drawable.ic_long_skirt);
+        style = new Style("long-skirt", R.drawable.ic_long_skirt, 1);
         pantsStyleList.add(style);
 
-        style = new Style("formal-skirt", R.drawable.ic_formal_skirt);
+        style = new Style("formal-skirt", R.drawable.ic_formal_skirt, 1);
         pantsStyleList.add(style);
     }
+
 
 
     /**
