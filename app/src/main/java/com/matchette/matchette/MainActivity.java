@@ -36,25 +36,24 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
+
 //import com.skydoves.colorpickerpreference.ColorEnvelope;
 //import com.skydoves.colorpickerpreference.ColorListener;
 
 public class MainActivity extends Activity {
-
-    //This is going to be the custom snackbar that is set to be GONE at creation.
-    private LinearLayout snackBar;
     private FrameLayout frame;
-    String currSnackbarSelection = "shirt";
 
+    // custom snackbar GONE at creation
+    private LinearLayout snackBar;
+    String currSnackbarSelection = "shirt";
     String currShirt = "t-shirt";
     String currPant = "pants";
     String currShirtColor = "CCD1D9";
     String currPantColor = "CCD1D9";
 
-    private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
-    private static final int REQUEST_TAKE_PHOTO = 1;
-
-    //For the recyclerView
+    // recyclerView of styles
     private List<Style> shirtStyleList = new ArrayList<>();
     private List<Style> pantsStyleList = new ArrayList<>();
     private List<Style> currentItemList = new ArrayList<>();
@@ -62,7 +61,16 @@ public class MainActivity extends Activity {
     private StyleAdapter sAdapter;
     private MainActivityFragment mainFragment;
 
+    // sharing
     private String shareFileName = "sharableImage.png";
+
+    // taking photo
+    private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
+    private static final int REQUEST_TAKE_PHOTO = 1;
+
+    // first-time tutorial
+    final String WHOLE_LAYOUT_SHOWCASE_ID = "12345",
+                SNACKBAR_LAYOUT_SHOWCASE_ID = "12346"; // Unique ID's to show tutorialS only once
 
 
     @Override
@@ -85,6 +93,8 @@ public class MainActivity extends Activity {
         createShareButton();
         createSaveButton();
         createCameraButton();
+
+        showWholeLayoutTutorial();
     }
 
     private void createCameraButton() {
@@ -323,6 +333,7 @@ public class MainActivity extends Activity {
 
     // Animation for a generic type in the recycler view
     protected void animationLogicForTypes(String type, List styleList){
+        showSnackbarTutorial();
         currSnackbarSelection = type;
         if (currentItemList == styleList && snackBar.getVisibility()==LinearLayout.GONE)
             snackBar.setVisibility(LinearLayout.VISIBLE);
@@ -480,5 +491,52 @@ public class MainActivity extends Activity {
         });
     }
 
+    private void showWholeLayoutTutorial() {
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500); // half second between each showcase view
+
+        MaterialShowcaseSequence wholeLayoutSequence = new MaterialShowcaseSequence(this, WHOLE_LAYOUT_SHOWCASE_ID);
+        wholeLayoutSequence.setConfig(config);
+
+        wholeLayoutSequence.addSequenceItem(findViewById(R.id.gallery_button),
+                "Collection of saved outfits, can be ordered based on your preference",
+                "GOT IT");
+
+        wholeLayoutSequence.addSequenceItem(findViewById(R.id.shareButton),
+                "Share the current outfit",
+                "GOT IT");
+
+        wholeLayoutSequence.addSequenceItem(findViewById(R.id.saveButton),
+                "Save the current outfit to your phone",
+                "GOT IT");
+
+        wholeLayoutSequence.start();
+    }
+
+    private void showSnackbarTutorial() {
+            ShowcaseConfig config = new ShowcaseConfig();
+            config.setDelay(500); // half second between each showcase view
+
+            MaterialShowcaseSequence snackbarSequence = new MaterialShowcaseSequence(this, SNACKBAR_LAYOUT_SHOWCASE_ID);
+            snackbarSequence.setConfig(config);
+
+            snackbarSequence.addSequenceItem(findViewById(R.id.recycler_view),
+                    "Scroll down to choose style",
+                    "GOT IT");
+            snackbarSequence.addSequenceItem(findViewById(R.id.colorPickerView),
+                    "Tap to pick a color",
+                    "GOT IT");
+            snackbarSequence.addSequenceItem(findViewById(R.id.v_lightness_slider),
+                    "Slide to change color lightness",
+                    "GOT IT");
+            snackbarSequence.addSequenceItem(findViewById(R.id.cameraButton),
+                    "Take picture of a color to apply on outfit",
+                    "GOT IT");
+            snackbarSequence.addSequenceItem(findViewById(R.id.closeSnackbar),
+                    "Click here or slide down to close bottom sheet",
+                    "GOT IT");
+
+            snackbarSequence.start();
+    }
 }
 
