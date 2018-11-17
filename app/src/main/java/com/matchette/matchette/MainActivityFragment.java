@@ -42,116 +42,41 @@ public class MainActivityFragment extends android.app.Fragment {
         view.invalidate();
     }
 
-    protected void changeVectorColor(int rid, ImageView view, int num, String color) {
+    private void changeVectorColor(int rid, ImageView view, int num, String color) {
         VectorChildFinder vector = new VectorChildFinder(getActivity(), rid, view);
         for (int i = 1; i <= num; i++){
             vector.findPathByName("yolo" + i).setFillColor(Color.parseColor("#"+color));
         }
     }
 
-    protected void changeStyle(String type, String style){
-        Log.d("change 2", type + " | " + style);
-        LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
-        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+    protected void changeStyleShirt(Style style) {
+        LinearLayout.LayoutParams lp1 = makeLinearLayoutParam(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+        LinearLayout.LayoutParams lp2 = makeLinearLayoutParam(ViewGroup.LayoutParams.MATCH_PARENT, 0);
         lp2.weight = 0;
         paddingLayout.setLayoutParams(lp2);
 
-        switch(type){
-            case "shirt":
-                switch(style){
-                    case "dress-shirt":
-                        shirt.setImageResource(R.drawable.ic_dress_shirt);
-                        lp1.weight=1.0f;
-                        shirtLayout.setLayoutParams(lp1);
-                        break;
-                    case "polo":
-                        shirt.setImageResource(R.drawable.ic_polo);
-                        lp1.weight=1.2f;
-                        shirtLayout.setLayoutParams(lp1);
-                        break;
-                    case "t-shirt":
-                        shirt.setImageResource(R.drawable.ic_t_shirt);
-                        lp1.weight=1.0f;
-                        shirtLayout.setLayoutParams(lp1);
-                        break;
-                    case "hoodie":
-                        shirt.setImageResource(R.drawable.ic_hoodie);
-                        lp1.weight=1.2f;
-                        shirtLayout.setLayoutParams(lp1);
-                        break;
-                    case "woman-sleeveless-shirt":
-                        shirt.setImageResource(R.drawable.ic_woman_sleeveless_shirt);
-                        lp1.weight=0.95f;
-                        shirtLayout.setLayoutParams(lp1);
-                        break;
-                    case "blouse":
-                        shirt.setImageResource(R.drawable.ic_blouse);
-                        lp1.weight=1.2f;
-                        shirtLayout.setLayoutParams(lp1);
-                        break;
-                    case "man-coat":
-                        shirt.setImageResource(R.drawable.ic_man_coat);
-                        lp1.weight=1.2f;
-                        shirtLayout.setLayoutParams(lp1);
-                        break;
-                    case "man-suit":
-                        shirt.setImageResource(R.drawable.ic_man_suit);
-                        lp1.weight=1.25f;
-                        shirtLayout.setLayoutParams(lp1);
-                        break;
-                    case "woman-jacket":
-                        shirt.setImageResource(R.drawable.ic_woman_jacket);
-                        lp1.weight=1.3f;
-                        shirtLayout.setLayoutParams(lp1);
-                        break;
-                    case "woman-suit":
-                        shirt.setImageResource(R.drawable.ic_woman_suit);
-                        lp1.weight=1.4f;
-                        shirtLayout.setLayoutParams(lp1);
-                        break;
-                }
-                break;
+        int rid = style.getRid();
+        float weight = style.getWeight();
+        shirt.setImageResource(rid);
+        lp1.weight = weight;
+        shirtLayout.setLayoutParams(lp1);
+    }
 
-            case "pant":
-                switch(style){
-                    case "pants":
-                        pant.setImageResource(R.drawable.ic_pant);
-                        lp1.weight=1.25f;
-                        pantLayout.setLayoutParams(lp1);
-                        break;
-                    case "shorts":
-                        pant.setImageResource(R.drawable.ic_shorts);
-                        lp1.weight=0.7f;
-                        pantLayout.setLayoutParams(lp1);
-                        break;
-                    case "formal-pants":
-                        pant.setImageResource(R.drawable.ic_formal_pants);
-                        lp1.weight=1.25f;
-                        pantLayout.setLayoutParams(lp1);
-                        break;
-                    case "woman-pants":
-                        pant.setImageResource(R.drawable.ic_woman_pants);
-                        lp1.weight=1.2f;
-                        pantLayout.setLayoutParams(lp1);
-                        break;
-                    case "skirt":
-                        pant.setImageResource(R.drawable.ic_skirt);
-                        lp1.weight=0.9f;
-                        pantLayout.setLayoutParams(lp1);
-                        break;
-                    case "long-skirt":
-                        pant.setImageResource(R.drawable.ic_long_skirt);
-                        lp1.weight=1.25f;
-                        pantLayout.setLayoutParams(lp1);
-                        break;
-                    case "formal-skirt":
-                        pant.setImageResource(R.drawable.ic_formal_skirt);
-                        lp1.weight=1.1f;
-                        pantLayout.setLayoutParams(lp1);
-                        break;
-                }
-                break;
-        }
+    protected void changeStylePant(Style style) {
+        LinearLayout.LayoutParams lp1 = makeLinearLayoutParam(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+        LinearLayout.LayoutParams lp2 = makeLinearLayoutParam(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+        lp2.weight = 0;
+        paddingLayout.setLayoutParams(lp2);
+
+        int rid = style.getRid();
+        float weight = style.getWeight();
+        pant.setImageResource(rid);
+        lp1.weight = weight;
+        shirtLayout.setLayoutParams(lp1);
+    }
+
+    private LinearLayout.LayoutParams makeLinearLayoutParam (int params, int height) {
+        return new LinearLayout.LayoutParams(params, height);
     }
 
     @Override

@@ -58,8 +58,8 @@ public class MainActivity extends Activity {
 
     private LinearLayout snackBar;
     String currSnackbarSelection = "shirt";
-    Style currShirt = new Style("t-shirt", R.drawable.ic_t_shirt, 1);
-    Style currPant = new Style("pants", R.drawable.ic_pant, 1);
+    Style currShirt = new Style("t-shirt", R.drawable.ic_t_shirt, 1, 1.0f);
+    Style currPant = new Style("pants", R.drawable.ic_pant, 1, 1.25f);
     String currShirtColor = "CCD1D9";
     String currPantColor = "CCD1D9";
 
@@ -220,11 +220,11 @@ public class MainActivity extends Activity {
                 Style currentStyle = currentItemList.get(position);
                 if (currSnackbarSelection.equals("shirt")){
                     currShirt = currentStyle;
-                    mainFragment.changeStyle("shirt", currentStyle.getName());
+                    mainFragment.changeStyleShirt(currentStyle);
                     mainFragment.changeColorShirt(currShirtColor, currentStyle);
                 } else if (currSnackbarSelection.equals("pant")){
                     currPant = currentStyle;
-                    mainFragment.changeStyle("pant", currentStyle.getName());
+                    mainFragment.changeStylePant(currentStyle);
                     mainFragment.changeColorPant(currPantColor, currentStyle);
                 }
             }
@@ -375,9 +375,9 @@ public class MainActivity extends Activity {
 
         try {
             AssetManager manager = getAssets();
-            Log.d("manager", manager.toString());
+            //Log.d("manager", manager.toString());
             stream = manager.open(filename + ".xml");
-            Log.d("stream", stream.toString());
+            //Log.d("stream", stream.toString());
             styles = styleParser.parse(stream, context);
         } catch (FileNotFoundException fE){
             Toast.makeText(context, "There was an error loading styles.", Toast.LENGTH_LONG);

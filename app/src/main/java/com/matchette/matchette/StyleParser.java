@@ -54,6 +54,7 @@ public class StyleParser {
         String name = null;
         String ridName = null;
         int num = 0;
+        float weight = 0;
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
@@ -65,13 +66,15 @@ public class StyleParser {
                 ridName = readRidName(parser);
             } else if (xmlName.equals("num")) {
                 num = readNum(parser);
+            } else if (xmlName.equals("weight")) {
+                weight = readWeight(parser);
             } else {
                 skip(parser);
             }
         }
 
         int rid = context.getResources().getIdentifier(ridName, "drawable", context.getPackageName());
-        return new Style(name, rid, num);
+        return new Style(name, rid, num, weight);
     }
 
     private String readName(XmlPullParser parser) throws IOException, XmlPullParserException {
@@ -85,7 +88,6 @@ public class StyleParser {
         parser.require(XmlPullParser.START_TAG, ns, "asset");
         String ridName = readText(parser);
         parser.require(XmlPullParser.END_TAG, ns, "asset");
-        Log.d("ridName", ridName);
         return ridName;
     }
 
@@ -94,6 +96,14 @@ public class StyleParser {
         String num = readText(parser);
         parser.require(XmlPullParser.END_TAG, ns, "num");
         return Integer.parseInt(num);
+    }
+
+    private float readWeight(XmlPullParser parser) throws  IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, ns, "weight");
+        String weight = readText(parser);
+        Log.d("Weight", weight);
+        parser.require(XmlPullParser.END_TAG, ns, "weight");
+        return Float.parseFloat(weight);
     }
 
     private String readText(XmlPullParser parser) throws IOException, XmlPullParserException {
