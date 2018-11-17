@@ -58,8 +58,8 @@ public class MainActivity extends Activity {
 
     private LinearLayout snackBar;
     String currSnackbarSelection = "shirt";
-    String currShirt = "t-shirt";
-    String currPant = "pants";
+    Style currShirt = new Style("t-shirt", R.drawable.ic_t_shirt, 1);
+    Style currPant = new Style("pants", R.drawable.ic_pant, 1);
     String currShirtColor = "CCD1D9";
     String currPantColor = "CCD1D9";
 
@@ -219,13 +219,13 @@ public class MainActivity extends Activity {
             public void onClick(View view, int position) {
                 Style currentStyle = currentItemList.get(position);
                 if (currSnackbarSelection.equals("shirt")){
-                    currShirt = currentStyle.getName();
+                    currShirt = currentStyle;
                     mainFragment.changeStyle("shirt", currentStyle.getName());
-                    mainFragment.changeColor(currShirtColor, "shirt", currentStyle.getName());
+                    mainFragment.changeColorShirt(currShirtColor, currentStyle);
                 } else if (currSnackbarSelection.equals("pant")){
-                    currPant = currentStyle.getName();
+                    currPant = currentStyle;
                     mainFragment.changeStyle("pant", currentStyle.getName());
-                    mainFragment.changeColor(currPantColor, "pant", currentStyle.getName());
+                    mainFragment.changeColorPant(currPantColor, currentStyle);
                 }
             }
 
@@ -254,10 +254,10 @@ public class MainActivity extends Activity {
     private void changeStyleColor(int i){
         if (currSnackbarSelection.equals("shirt")) {
             currShirtColor = Integer.toHexString(i).toUpperCase();
-            mainFragment.changeColor(currShirtColor, currSnackbarSelection, currShirt);
+            mainFragment.changeColorShirt(currShirtColor, currShirt);
         } else {
             currPantColor = Integer.toHexString(i).toUpperCase();
-            mainFragment.changeColor(currPantColor, currSnackbarSelection, currPant);
+            mainFragment.changeColorPant(currPantColor, currPant);
         }
     }
 
@@ -470,9 +470,9 @@ public class MainActivity extends Activity {
                 int domColor = p.getDominantColor(Color.parseColor("#CCD1D9"));
                 String hexColor = Integer.toHexString(domColor).toUpperCase();
                 if (currSnackbarSelection.equals("shirt")) {
-                    mainFragment.changeColor(hexColor, currSnackbarSelection, currShirt);
+                    mainFragment.changeColorShirt(hexColor, currShirt);
                 } else {
-                    mainFragment.changeColor(hexColor, currSnackbarSelection, currPant);
+                    mainFragment.changeColorPant(hexColor, currPant);
                 }
             }
         });

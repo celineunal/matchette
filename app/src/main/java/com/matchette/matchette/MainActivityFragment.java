@@ -26,132 +26,27 @@ public class MainActivityFragment extends android.app.Fragment {
 
     }
 
-    protected void changeColor(String color, String type, String style){
-        switch (type){
-            case "shirt":
-                switch(style){
-                    case "t-shirt":
-                        changeColorUtil(color, "t-shirt", type, 1);
-                        break;
-                    case "polo":
-                        changeColorUtil(color, "polo", type, 1);
-                        break;
-                    case "dress-shirt":
-                        changeColorUtil(color, "dress-shirt", type, 6);
-                        break;
-                    case "hoodie":
-                        changeColorUtil(color, "hoodie", type, 1);
-                        break;
-                    case "woman-sleeveless-shirt":
-                        changeColorUtil(color, "woman-sleeveless-shirt", type, 4);
-                        break;
-                    case "blouse":
-                        changeColorUtil(color, "blouse", type, 3);
-                        break;
-                    case "man-coat":
-                        changeColorUtil(color, "man-coat", type, 4);
-                        break;
-                    case "man-suit":
-                        changeColorUtil(color, "man-suit", type, 1);
-                        break;
-                    case "woman-jacket":
-                        changeColorUtil(color,"woman-jacket", type, 4);
-                        break;
-                    case "woman-suit":
-                        changeColorUtil(color,"woman-suit", type, 5);
-                        break;
-                }
-                break;
-            case "pant":
-                switch(style){
-                    case "pants":
-                        changeColorUtil(color, "pants",type,  1);
-                        break;
-                    case "shorts":
-                        changeColorUtil(color, "shorts",type, 2);
-                        break;
-                    case "formal-pants":
-                        changeColorUtil(color, "formal-pants",type, 1);
-                        break;
-                    case "woman-pants":
-                        changeColorUtil(color, "woman-pants", type, 1);
-                        break;
-                    case "skirt":
-                        changeColorUtil(color, "skirt", type, 1);
-                        break;
-                    case "long-skirt":
-                        changeColorUtil(color, "long-skirt", type, 4);
-                        break;
-                    case "formal-skirt":
-                        changeColorUtil(color, "formal-skirt", type, 2);
-                        break;
-                }
-                break;
-        }
+    protected void changeColorShirt(String color, Style style){
+        ImageView view = shirt;
+        int num = style.getNum();
+        int rid = style.getRid();
+        changeVectorColor(rid, view, num, color);
+        view.invalidate();
     }
 
-    protected void changeColorUtil(String color, String style, String type, int num){
-        int id = 0;
-        switch(style){
-            case "t-shirt":
-                id = R.drawable.ic_t_shirt;
-                break;
-            case "polo":
-                id = R.drawable.ic_polo;
-                break;
-            case "dress-shirt":
-                id = R.drawable.ic_dress_shirt;
-                break;
-            case "hoodie":
-                id = R.drawable.ic_hoodie;
-                break;
-            case "woman-sleeveless-shirt":
-                id = R.drawable.ic_woman_sleeveless_shirt;
-                break;
-            case "blouse":
-                id = R.drawable.ic_blouse;
-                break;
-            case "man-coat":
-                id = R.drawable.ic_man_coat;
-                break;
-            case "man-suit":
-                id = R.drawable.ic_man_suit;
-                break;
-            case "woman-jacket":
-                id = R.drawable.ic_woman_jacket;
-                break;
-            case "pants":
-                id = R.drawable.ic_pant;
-                break;
-            case "shorts":
-                id = R.drawable.ic_shorts;
-                break;
-            case "formal-pants":
-                id = R.drawable.ic_formal_pants;
-                break;
-            case "woman-pants":
-                id = R.drawable.ic_woman_pants;
-                break;
-            case "skirt":
-                id = R.drawable.ic_skirt;
-                break;
-            case "long-skirt":
-                id = R.drawable.ic_long_skirt;
-                break;
-            case "formal-skirt":
-                id = R.drawable.ic_formal_skirt;
-                break;
-            case "woman-suit":
-                id = R.drawable.ic_woman_suit;
-                break;
+    protected void changeColorPant(String color, Style style){
+        ImageView view = pant;
+        int num = style.getNum();
+        int rid = style.getRid();
+        changeVectorColor(rid, view, num, color);
+        view.invalidate();
+    }
 
-        }
-        ImageView view = (type.equals("shirt")) ? shirt:pant;
-        VectorChildFinder vector = new VectorChildFinder(getActivity(), id, view);
+    protected void changeVectorColor(int rid, ImageView view, int num, String color) {
+        VectorChildFinder vector = new VectorChildFinder(getActivity(), rid, view);
         for (int i = 1; i <= num; i++){
             vector.findPathByName("yolo" + i).setFillColor(Color.parseColor("#"+color));
         }
-        view.invalidate();
     }
 
     protected void changeStyle(String type, String style){
