@@ -151,7 +151,7 @@
                             app:density="12"
                             app:lightnessSlider="true"
                             app:lightnessSliderView="@+id/v_lightness_slider"
-                            app:wheelType="FLOWER" />
+                            app:wheelType="CIRCLE" />
 
                         <com.flask.colorpicker.slider.LightnessSlider
                             android:id="@+id/v_lightness_slider"
