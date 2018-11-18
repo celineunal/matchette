@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StyleAdapter extends RecyclerView.Adapter<StyleAdapter.MyViewHolder>{
@@ -45,12 +46,21 @@ public class StyleAdapter extends RecyclerView.Adapter<StyleAdapter.MyViewHolder
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
+        //Next line is like a hack for endless recyclerview.
+        position = position % styleList.size();
         Style style = styleList.get(position);
         holder.style_image.setImageResource(style.getRid());
     }
 
+    public int getActualItemCount() {
+        if (styleList == null) {
+            styleList = new ArrayList<>();
+        }
+        return styleList.size();
+    }
+
     @Override
     public int getItemCount() {
-        return styleList.size();
+        return Integer.MAX_VALUE;
     }
 }

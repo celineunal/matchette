@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -80,7 +81,13 @@ public class MainActivity extends Activity {
 
     // first-time tutorial
     final String WHOLE_LAYOUT_SHOWCASE_ID = "12345",
-                SNACKBAR_LAYOUT_SHOWCASE_ID = "12346"; // Unique ID's to show tutorialS only once
+                SNACKBAR_LAYOUT_SHOWCASE_ID = "12346"; // Unique ID's to show tutorialS only once7
+
+    //For the RecyclerView endless scrolling:
+    RecyclerView.LayoutManager mLayoutManager;
+    private int previousTotal = 0;
+    private boolean loading = true;
+    int firstVisibleItem, visibleItemCount, totalItemCount;
 
 
     @Override
@@ -200,8 +207,9 @@ public class MainActivity extends Activity {
     }
 
     private void createRecyclerView(Context context){
+        mLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
+
         recyclerView = findViewById(R.id.recycler_view);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         SnapHelper snapHelper = new PagerSnapHelper();
