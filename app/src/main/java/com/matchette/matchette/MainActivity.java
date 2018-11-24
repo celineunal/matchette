@@ -41,8 +41,9 @@ public class MainActivity extends Activity {
     private FrameLayout frame;
 
     public RelativeLayout snackBar;
-    String currSnackbarSelection = "shirt";
-    String currColor = "CCD1D9";
+    public String currShirtColor = "CCD1D9";
+    public String currPantColor = "CCD1D9";
+
 
     private MainActivityFragment mainFragment;
 
@@ -178,8 +179,12 @@ public class MainActivity extends Activity {
     }
 
     private void changeStyleColor(int i){
-            currColor = Integer.toHexString(i).toUpperCase();
-            mainFragment.changeStyleColor(currColor);
+        String color = Integer.toHexString(i).toUpperCase();
+        if (mainFragment.currSelection.equals("shirt")){
+            mainFragment.updateShirtColorRV(color);
+        } else if (mainFragment.currSelection.equals("pant")) {
+            mainFragment.updatePantColorRV(color);
+        }
     }
 
     public void saveButtonListener(ImageButton btn){
@@ -335,8 +340,7 @@ public class MainActivity extends Activity {
         Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
             public void onGenerated(Palette p) {
                 int domColor = p.getDominantColor(Color.parseColor("#CCD1D9"));
-                String hexColor = Integer.toHexString(domColor).toUpperCase();
-                mainFragment.changeStyleColor(hexColor);
+                changeStyleColor(domColor);
             }
         });
     }
@@ -389,5 +393,6 @@ public class MainActivity extends Activity {
     public RelativeLayout getSnackbar() {
         return snackBar;
     }
+
 }
 

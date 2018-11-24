@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
@@ -43,23 +44,14 @@ public class MainActivityFragment extends android.app.Fragment {
     private RecyclerView recyclerViewPant;
     private List<Style> shirtStyleList = new ArrayList<>();
     private List<Style> pantsStyleList = new ArrayList<>();
+    public String currSelection = "shirt";
+    public String currColor = "CCD1D9";
 
-    Context context;
-    MainActivity activity;
+    private Context context;
+    private MainActivity activity;
 
     public MainActivityFragment() {
 
-    }
-
-    protected void changeStyleColor(String color){
-
-    }
-
-    private void changeVectorColor(int rid, ImageView view, int num, String color) {
-        VectorChildFinder vector = new VectorChildFinder(activity, rid, view);
-        for (int i = 1; i <= num; i++){
-            vector.findPathByName("yolo" + i).setFillColor(Color.parseColor("#"+color));
-        }
     }
 
     private List<Style> loadStyleListFromXml(String filename, Context context){
@@ -93,21 +85,27 @@ public class MainActivityFragment extends android.app.Fragment {
         return styles;
     }
 
-    private void recyclerViewListener(RecyclerView recyclerView, Context context){
+    private void recyclerViewListener(RecyclerView recyclerView, Context context, final String selection){
         Log.d("RVListener", "running");
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(context, recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
+                currSelection = selection;
                 if (activity.getSnackBarVisibility() == LinearLayout.GONE) {
                     activity.showSnackBar();
-                } else if (activity.getSnackBarVisibility() == LinearLayout.VISIBLE) {
-                    activity.hideSnackbar();
                 }
             }
 
             @Override
             public void onLongClick(View view, int position) {}
         }));
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                currSelection = selection;
+            }
+        });
     }
 
     private void createRecyclerView(Context context, RecyclerView recyclerView){
@@ -123,9 +121,28 @@ public class MainActivityFragment extends android.app.Fragment {
         snapHelper.attachToRecyclerView(recyclerView);
     }
 
-    private void updateRecyclerView(List styleList, RecyclerView recyclerView){
+    private void updateRecyclerView(List styleList, RecyclerView recyclerView, String color){
         StyleAdapter sAdapter = new StyleAdapter(styleList);
+        sAdapter.changeRVcolor(color);
         recyclerView.setAdapter(sAdapter);
+    }
+
+    public void updateShirtColorRV(String color) {
+        LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerViewShirt.getLayoutManager();
+        int position = linearLayoutManager.findFirstVisibleItemPosition();
+        RecyclerView.LayoutManager nLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        nLayoutManager.scrollToPosition(position);
+        recyclerViewShirt.setLayoutManager(nLayoutManager);
+        updateRecyclerView(shirtStyleList, recyclerViewShirt, color);
+    }
+
+    public void updatePantColorRV(String color) {
+        LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerViewPant.getLayoutManager();
+        int position = linearLayoutManager.findFirstVisibleItemPosition();
+        RecyclerView.LayoutManager nLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        nLayoutManager.scrollToPosition(position);
+        recyclerViewPant.setLayoutManager(nLayoutManager);
+        updateRecyclerView(pantsStyleList, recyclerViewPant, color);
     }
 
     @Override
@@ -144,12 +161,13 @@ public class MainActivityFragment extends android.app.Fragment {
         pantsStyleList = loadStyleListFromXml("pant_styles", context);
         createRecyclerView(context, recyclerViewShirt);
         createRecyclerView(context, recyclerViewPant);
-        updateRecyclerView(shirtStyleList, recyclerViewShirt);
-        updateRecyclerView(pantsStyleList, recyclerViewPant);
-        recyclerViewListener(recyclerViewShirt, context);
-        recyclerViewListener(recyclerViewPant, context);
+        updateRecyclerView(shirtStyleList, recyclerViewShirt, activity.currShirtColor);
+        updateRecyclerView(pantsStyleList, recyclerViewPant, activity.currPantColor);
+        recyclerViewListener(recyclerViewShirt, context, "shirt");
+        recyclerViewListener(recyclerViewPant, context, "pant");
 
 
         return fragment;
     }
+
 }
