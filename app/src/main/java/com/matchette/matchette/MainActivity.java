@@ -5,26 +5,18 @@ import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.graphics.Palette;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PagerSnapHelper;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SnapHelper;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,44 +24,26 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorChangedListener;
 import com.flask.colorpicker.OnColorSelectedListener;
 
-
-import org.xmlpull.v1.XmlPullParserException;
-
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
-//import com.skydoves.colorpickerpreference.ColorEnvelope;
-//import com.skydoves.colorpickerpreference.ColorListener;
 
 public class MainActivity extends Activity {
     private FrameLayout frame;
 
-    private LinearLayout snackBar;
+    public RelativeLayout snackBar;
     String currSnackbarSelection = "shirt";
-    Style currShirt = new Style("t-shirt", R.drawable.ic_t_shirt, 1, 1.0f);
-    Style currPant = new Style("pants", R.drawable.ic_pant, 1, 1.25f);
-    String currShirtColor = "CCD1D9";
-    String currPantColor = "CCD1D9";
+    String currColor = "CCD1D9";
 
-    // recyclerView of styles
-    private List<Style> shirtStyleList = new ArrayList<>();
-    private List<Style> pantsStyleList = new ArrayList<>();
-    private List<Style> currentItemList = new ArrayList<>();
-    private RecyclerView recyclerView;
-    private StyleAdapter sAdapter;
     private MainActivityFragment mainFragment;
 
     // sharing
@@ -83,29 +57,21 @@ public class MainActivity extends Activity {
     final String WHOLE_LAYOUT_SHOWCASE_ID = "12345",
                 SNACKBAR_LAYOUT_SHOWCASE_ID = "12346"; // Unique ID's to show tutorialS only once7
 
-    //For the RecyclerView endless scrolling:
-    RecyclerView.LayoutManager mLayoutManager;
-    private int previousTotal = 0;
-    private boolean loading = true;
-    int firstVisibleItem, visibleItemCount, totalItemCount;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
          super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        snackBar = findViewById(R.id.custom_snackbar);
+        frame = findViewById(R.id.temporary_frame);
+
         mainFragmentTransaction();
 
-        snackbarAnimation();
+        snackbarAnimation(snackBar, frame);
         setCloseSnackbar();
-
-        createRecyclerView(getApplicationContext());
-        recyclerViewListener();
 
         createColorPickerView();
 
-        createCustomButton();
         createGalleryButton();
         createShareButton();
         createSaveButton();
@@ -129,16 +95,6 @@ public class MainActivity extends Activity {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.add(R.id.fragment, mainFragment);
         ft.commit();
-    }
-
-    private void createCustomButton() {
-        final Button customButton = findViewById(R.id.custom_button);
-        customButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Coming soon!", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void createGalleryButton() {
@@ -177,12 +133,10 @@ public class MainActivity extends Activity {
     /**
      * For animation when showing/hiding the snackbar so that it doesn't show white space.
      */
-    private void snackbarAnimation(){
+    private void snackbarAnimation(RelativeLayout snackBar, FrameLayout frame){
         final LinearLayout wholeLayout = findViewById(R.id.whole_layout);
         setStartDelayToZero(wholeLayout);
-        frame = this.findViewById(R.id.temporary_frame);
         setStartDelayToZero(frame);
-        snackBar = this.findViewById(R.id.custom_snackbar);
         setStartDelayToZero(snackBar);
 
         // For swiping snackbar down
@@ -206,42 +160,6 @@ public class MainActivity extends Activity {
         });
     }
 
-    private void createRecyclerView(Context context){
-        mLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
-
-        recyclerView = findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        SnapHelper snapHelper = new PagerSnapHelper();
-        snapHelper.attachToRecyclerView(recyclerView);
-        recyclerView.setScrollbarFadingEnabled(false); // always visible
-
-        shirtStyleList = loadStyleListFromXml("shirt_styles", context);
-        pantsStyleList = loadStyleListFromXml("pant_styles", context);
-
-    }
-
-    private void recyclerViewListener(){
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                Style currentStyle = currentItemList.get(position);
-                if (currSnackbarSelection.equals("shirt")){
-                    currShirt = currentStyle;
-                    mainFragment.changeStyleShirt(currentStyle);
-                    mainFragment.changeColorShirt(currShirtColor, currentStyle);
-                } else if (currSnackbarSelection.equals("pant")){
-                    currPant = currentStyle;
-                    mainFragment.changeStylePant(currentStyle);
-                    mainFragment.changeColorPant(currPantColor, currentStyle);
-                }
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {}
-        }));
-    }
-
     private void createColorPickerView() {
         final ColorPickerView colorPicker = findViewById(R.id.colorPickerView);
         colorPicker.addOnColorSelectedListener(new OnColorSelectedListener() {
@@ -260,13 +178,8 @@ public class MainActivity extends Activity {
     }
 
     private void changeStyleColor(int i){
-        if (currSnackbarSelection.equals("shirt")) {
-            currShirtColor = Integer.toHexString(i).toUpperCase();
-            mainFragment.changeColorShirt(currShirtColor, currShirt);
-        } else {
-            currPantColor = Integer.toHexString(i).toUpperCase();
-            mainFragment.changeColorPant(currPantColor, currPant);
-        }
+            currColor = Integer.toHexString(i).toUpperCase();
+            mainFragment.changeStyleColor(currColor);
     }
 
     public void saveButtonListener(ImageButton btn){
@@ -344,66 +257,12 @@ public class MainActivity extends Activity {
         }
     }
 
-    protected void animationLogicShirt(){
-        animationLogicForTypes("shirt",shirtStyleList);
+    public int getSnackBarVisibility () {
+        return snackBar.getVisibility();
     }
 
-    protected void animationLogicPant(){
-        animationLogicForTypes("pant",pantsStyleList);
-    }
-
-    // Animation for a generic type in the recycler view
-    protected void animationLogicForTypes(String type, List styleList){
-        showSnackbarTutorial();
-        currSnackbarSelection = type;
-        if (currentItemList == styleList && snackBar.getVisibility()==LinearLayout.GONE)
-            snackBar.setVisibility(LinearLayout.VISIBLE);
-        else if (currentItemList != styleList && snackBar.getVisibility()==LinearLayout.VISIBLE){
-            currentItemList = styleList;
-            updateRecyclerView(styleList);
-        }
-        else if (currentItemList != styleList && snackBar.getVisibility()==LinearLayout.GONE){
-            currentItemList = styleList;
-            updateRecyclerView(styleList);
-            snackBar.setVisibility(LinearLayout.VISIBLE);
-        }
-    }
-
-    // Updating recycler view to switch between shirts and pants
-    private void updateRecyclerView(List styleList){
-        sAdapter = new StyleAdapter(styleList);
-        recyclerView.setAdapter(sAdapter);
-    }
-
-    private List<Style> loadStyleListFromXml(String filename, Context context){
-        InputStream stream = null;
-        // Instantiate the parser
-        StyleParser styleParser = new StyleParser();
-        List<Style> styles = null;
-
-        try {
-            AssetManager manager = getAssets();
-            //Log.d("manager", manager.toString());
-            stream = manager.open(filename + ".xml");
-            //Log.d("stream", stream.toString());
-            styles = styleParser.parse(stream, context);
-        } catch (FileNotFoundException fE){
-            Toast.makeText(context, "There was an error loading styles.", Toast.LENGTH_LONG);
-        } catch (XmlPullParserException xE) {
-            Toast.makeText(context, "There was an error parsing the styles file.", Toast.LENGTH_LONG);
-        } catch (IOException iE) {
-            Toast.makeText(context, "There was an error, I do not know what.", Toast.LENGTH_LONG);
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException iE) {
-                    Toast.makeText(context, "What is IOException anyway?", Toast.LENGTH_LONG);
-                }
-            }
-        }
-
-        return styles;
+    public void showSnackBar() {
+        snackBar.setVisibility(LinearLayout.VISIBLE);
     }
 
     /**
@@ -477,11 +336,7 @@ public class MainActivity extends Activity {
             public void onGenerated(Palette p) {
                 int domColor = p.getDominantColor(Color.parseColor("#CCD1D9"));
                 String hexColor = Integer.toHexString(domColor).toUpperCase();
-                if (currSnackbarSelection.equals("shirt")) {
-                    mainFragment.changeColorShirt(hexColor, currShirt);
-                } else {
-                    mainFragment.changeColorPant(hexColor, currPant);
-                }
+                mainFragment.changeStyleColor(hexColor);
             }
         });
     }
@@ -515,9 +370,6 @@ public class MainActivity extends Activity {
             MaterialShowcaseSequence snackbarSequence = new MaterialShowcaseSequence(this, SNACKBAR_LAYOUT_SHOWCASE_ID);
             snackbarSequence.setConfig(config);
 
-            snackbarSequence.addSequenceItem(findViewById(R.id.recycler_view),
-                    "Scroll down to choose style",
-                    "GOT IT");
             snackbarSequence.addSequenceItem(findViewById(R.id.colorPickerView),
                     "Tap to pick a color",
                     "GOT IT");
@@ -532,6 +384,10 @@ public class MainActivity extends Activity {
                     "GOT IT");
 
             snackbarSequence.start();
+    }
+
+    public RelativeLayout getSnackbar() {
+        return snackBar;
     }
 }
 

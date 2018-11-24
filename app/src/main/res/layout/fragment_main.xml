@@ -18,14 +18,10 @@
         android:padding="5dp"
         android:id="@+id/shirtLayout">
 
-        <ImageView
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view_shirt"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_t_shirt"
-            android:contentDescription="yolo1"
-            android:id="@+id/shirt"
-            android:clickable="true"
-            android:focusable="true"/>
+            android:layout_height="match_parent"/>
     </LinearLayout>
 
     <LinearLayout
@@ -34,14 +30,10 @@
         android:layout_weight="1.25"
         android:padding="5dp"
         android:id="@+id/pantLayout">
-        <ImageView
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view_pant"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_pant"
-            android:contentDescription="yolo2"
-            android:id="@+id/pant"
-            android:clickable="true"
-            android:focusable="true"/>
+            android:layout_height="match_parent" />
     </LinearLayout>
 
     <LinearLayout
