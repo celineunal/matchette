@@ -1,62 +1,27 @@
 <styles>
     <style>
-        <num>1</num>
-        <name>t-shirt</name>
-        <asset>ic_t_shirt</asset>
+        <name>t_shirt</name>
+        <asset>t_shirt</asset>
         <weight>1.0</weight>
     </style>
     <style>
-        <num>6</num>
-        <name>dress-shirt</name>
-        <asset>ic_dress_shirt</asset>
+        <name>dress_shirt</name>
+        <asset>dress_shirt</asset>
         <weight>1.0</weight>
     </style>
     <style>
-        <num>1</num>
         <name>hoodie</name>
-        <asset>ic_hoodie</asset>
+        <asset>hoodie</asset>
         <weight>1.2</weight>
     </style>
     <style>
-        <num>1</num>
         <name>polo</name>
-        <asset>ic_polo</asset>
+        <asset>polo</asset>
         <weight>1.2</weight>
     </style>
     <style>
-        <num>4</num>
-        <name>woman-sleeveless-shirt</name>
-        <asset>ic_woman_sleeveless_shirt</asset>
+        <name>long_sleeve</name>
+        <asset>long_sleeve</asset>
         <weight>0.95</weight>
-    </style>
-    <style>
-        <num>3</num>
-        <name>blouse</name>
-        <asset>ic_blouse</asset>
-        <weight>1.2</weight>
-    </style>
-    <style>
-        <num>4</num>
-        <name>man-coat</name>
-        <asset>ic_man_coat</asset>
-        <weight>1.25</weight>
-    </style>
-    <style>
-        <num>1</num>
-        <name>man-suit</name>
-        <asset>ic_man_suit</asset>
-        <weight>1.25</weight>
-    </style>
-    <style>
-        <num>4</num>
-        <name>woman-jacket</name>
-        <asset>ic_woman_jacket</asset>
-        <weight>1.3</weight>
-    </style>
-    <style>
-        <num>5</num>
-        <name>woman-suit</name>
-        <asset>ic_woman_suit</asset>
-        <weight>1.25</weight>
     </style>
 </styles>

@@ -1,44 +1,12 @@
 <styles>
     <style>
-        <num>1</num>
         <name>pants</name>
-        <asset>ic_pant</asset>
+        <asset>pant</asset>
         <weight>1.25</weight>
     </style>
     <style>
-        <num>2</num>
         <name>shorts</name>
-        <asset>ic_shorts</asset>
+        <asset>shorts</asset>
         <weight>1.7</weight>
-    </style>
-    <style>
-        <num>1</num>
-        <name>formal-pants</name>
-        <asset>ic_formal_pants</asset>
-        <weight>1.25</weight>
-    </style>
-    <style>
-        <num>1</num>
-        <name>woman-pants</name>
-        <asset>ic_woman_pants</asset>
-        <weight>1.2</weight>
-    </style>
-    <style>
-        <num>1</num>
-        <name>skirt</name>
-        <asset>ic_skirt</asset>
-        <weight>1.65</weight>
-    </style>
-    <style>
-        <num>4</num>
-        <name>long-skirt</name>
-        <asset>ic_long_skirt</asset>
-        <weight>1.25</weight>
-    </style>
-    <style>
-        <num>2</num>
-        <name>formal-skirt</name>
-        <asset>ic_formal_skirt</asset>
-        <weight>1.1</weight>
     </style>
 </styles>

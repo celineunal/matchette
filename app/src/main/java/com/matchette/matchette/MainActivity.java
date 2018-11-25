@@ -13,6 +13,7 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
@@ -58,10 +59,10 @@ public class MainActivity extends Activity {
 
     private LinearLayout snackBar;
     String currSnackbarSelection = "shirt";
-    Style currShirt = new Style("t-shirt", R.drawable.ic_t_shirt, 1, 1.0f);
-    Style currPant = new Style("pants", R.drawable.ic_pant, 1, 1.25f);
-    String currShirtColor = "CCD1D9";
-    String currPantColor = "CCD1D9";
+    Style currShirt = new Style("t-shirt", R.drawable.t_shirt, 1.0f);
+    Style currPant = new Style("pants", R.drawable.pant,  1.25f);
+    int currShirtColor = Integer.parseInt("CCD1D9",16);
+    int currPantColor =  Integer.parseInt("CCD1D9",16);;
 
     // recyclerView of styles
     private List<Style> shirtStyleList = new ArrayList<>();
@@ -193,7 +194,13 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (snackBar.getVisibility() != LinearLayout.GONE) {
-                    hideSnackbar();
+                    Thread th = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hideSnackbar();
+                        }
+                    });
+                    th.run();
                 }
             }
         });
@@ -221,11 +228,11 @@ public class MainActivity extends Activity {
                 if (currSnackbarSelection.equals("shirt")){
                     currShirt = currentStyle;
                     mainFragment.changeStyleShirt(currentStyle);
-                    mainFragment.changeColorShirt(currShirtColor, currentStyle);
+                    mainFragment.changeColorShirt(currShirtColor);
                 } else if (currSnackbarSelection.equals("pant")){
                     currPant = currentStyle;
                     mainFragment.changeStylePant(currentStyle);
-                    mainFragment.changeColorPant(currPantColor, currentStyle);
+                    mainFragment.changeColorPant(currPantColor);
                 }
             }
 
@@ -253,11 +260,11 @@ public class MainActivity extends Activity {
 
     private void changeStyleColor(int i){
         if (currSnackbarSelection.equals("shirt")) {
-            currShirtColor = Integer.toHexString(i).toUpperCase();
-            mainFragment.changeColorShirt(currShirtColor, currShirt);
+            currShirtColor = i;
+            mainFragment.changeColorShirt(i);
         } else {
-            currPantColor = Integer.toHexString(i).toUpperCase();
-            mainFragment.changeColorPant(currPantColor, currPant);
+            currPantColor = i;
+            mainFragment.changeColorPant(i);
         }
     }
 
@@ -348,8 +355,15 @@ public class MainActivity extends Activity {
     protected void animationLogicForTypes(String type, List styleList){
         showSnackbarTutorial();
         currSnackbarSelection = type;
-        if (currentItemList == styleList && snackBar.getVisibility()==LinearLayout.GONE)
-            snackBar.setVisibility(LinearLayout.VISIBLE);
+        if (currentItemList == styleList && snackBar.getVisibility()==LinearLayout.GONE) {
+            Thread th = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    snackBar.setVisibility(LinearLayout.VISIBLE);
+                }
+            });
+            th.run();
+        }
         else if (currentItemList != styleList && snackBar.getVisibility()==LinearLayout.VISIBLE){
             currentItemList = styleList;
             updateRecyclerView(styleList);
@@ -357,7 +371,13 @@ public class MainActivity extends Activity {
         else if (currentItemList != styleList && snackBar.getVisibility()==LinearLayout.GONE){
             currentItemList = styleList;
             updateRecyclerView(styleList);
-            snackBar.setVisibility(LinearLayout.VISIBLE);
+            Thread th = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    snackBar.setVisibility(LinearLayout.VISIBLE);
+                }
+            });
+            th.run();
         }
     }
 
@@ -468,11 +488,10 @@ public class MainActivity extends Activity {
         Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
             public void onGenerated(Palette p) {
                 int domColor = p.getDominantColor(Color.parseColor("#CCD1D9"));
-                String hexColor = Integer.toHexString(domColor).toUpperCase();
                 if (currSnackbarSelection.equals("shirt")) {
-                    mainFragment.changeColorShirt(hexColor, currShirt);
+                    mainFragment.changeColorShirt(domColor);
                 } else {
-                    mainFragment.changeColorPant(hexColor, currPant);
+                    mainFragment.changeColorPant(domColor);
                 }
             }
         });
