@@ -18,8 +18,6 @@ public class StyleAdapter extends RecyclerView.Adapter<StyleAdapter.MyViewHolder
 
 
     private List<Style> styleList;
-    private Context context;
-    public String color = "CCD1D9";
 
     // Provide a direct reference to each of the views within a data item
     // Used to cache the views within the item layout for fast access
@@ -53,36 +51,11 @@ public class StyleAdapter extends RecyclerView.Adapter<StyleAdapter.MyViewHolder
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        //Next line is like a hack for endless recyclerview.
-        position = position % styleList.size();
         Style style = styleList.get(position);
-        int rid = style.getRid();
-        int num = style.getNum();
-        holder.style_image.setImageResource(rid);
-        context = holder.style_image.getContext();
-        changeVectorColor(rid, holder.style_image, num, color);
-    }
-
-    public int getActualItemCount() {
-        if (styleList == null) {
-            styleList = new ArrayList<>();
-        }
-        return styleList.size();
     }
 
     @Override
     public int getItemCount() {
-        return Integer.MAX_VALUE;
-    }
-
-    private void changeVectorColor(int rid, ImageView view, int num, String color) {
-        VectorChildFinder vector = new VectorChildFinder(context, rid, view);
-        for (int i = 1; i <= num; i++){
-            vector.findPathByName("yolo" + i).setFillColor(Color.parseColor("#"+color));
-        }
-    }
-
-    public void changeRVcolor(String color){
-        this.color = color;
+        return styleList.size();
     }
 }

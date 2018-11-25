@@ -98,8 +98,6 @@ public class MainActivity extends Activity {
         recyclerViewListener();
 
         createColorPickerView();
-
-        createCustomButton();
         createGalleryButton();
         createShareButton();
         createSaveButton();
@@ -125,15 +123,15 @@ public class MainActivity extends Activity {
         ft.commit();
     }
 
-    private void createCustomButton() {
-        final Button customButton = findViewById(R.id.custom_button);
-        customButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Coming soon!", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+//    private void createCustomButton() {
+//        final Button customButton = findViewById(R.id.custom_button);
+//        customButton.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View view) {
+//                Toast.makeText(getApplicationContext(), "Coming soon!", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
 
     private void createGalleryButton() {
         final Button galleryButton = findViewById(R.id.gallery_button);
@@ -214,10 +212,8 @@ public class MainActivity extends Activity {
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
         recyclerView.setScrollbarFadingEnabled(false); // always visible
-
         shirtStyleList = loadStyleListFromXml("shirt_styles", context);
         pantsStyleList = loadStyleListFromXml("pant_styles", context);
-
     }
 
     private void recyclerViewListener(){
@@ -526,9 +522,9 @@ public class MainActivity extends Activity {
             MaterialShowcaseSequence snackbarSequence = new MaterialShowcaseSequence(this, SNACKBAR_LAYOUT_SHOWCASE_ID);
             snackbarSequence.setConfig(config);
 
-            snackbarSequence.addSequenceItem(findViewById(R.id.recycler_view),
-                    "Scroll down to choose style",
-                    "GOT IT");
+//            snackbarSequence.addSequenceItem(findViewById(R.id.recycler_view),
+//                    "Scroll down to choose style",
+//                    "GOT IT");
             snackbarSequence.addSequenceItem(findViewById(R.id.colorPickerView),
                     "Tap to pick a color",
                     "GOT IT");
