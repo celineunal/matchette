@@ -52,6 +52,7 @@ public class StyleAdapter extends RecyclerView.Adapter<StyleAdapter.MyViewHolder
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Style style = styleList.get(position);
+        holder.style_image.setImageResource(style.getRid());
     }
 
     @Override
