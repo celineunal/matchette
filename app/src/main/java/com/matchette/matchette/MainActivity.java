@@ -235,33 +235,6 @@ public class MainActivity extends Activity {
         }));
     }
 
-//    private void createColorPickerView() {
-//        final ColorPickerView colorPicker = findViewById(R.id.colorPickerView);
-//        colorPicker.addOnColorSelectedListener(new OnColorSelectedListener() {
-//            @Override
-//            public void onColorSelected(int i) {
-//                changeStyleColor(i);
-//            }
-//        });
-//
-//        colorPicker.addOnColorChangedListener(new OnColorChangedListener() {
-//            @Override
-//            public void onColorChanged(int i) {
-//                changeStyleColor(i);
-//            }
-//        });
-//    }
-//
-//    private void changeStyleColor(int i){
-//        if (currSnackbarSelection.equals("shirt")) {
-//            currShirtColor = i;
-//            mainFragment.changeColorShirt(i);
-//        } else {
-//            currPantColor = i;
-//            mainFragment.changeColorPant(i);
-//        }
-//    }
-
     private void createColorPickerView() {
         final ColorPickerView colorPicker = findViewById(R.id.colorPickerView);
         colorPicker.addOnColorSelectedListener(new OnColorSelectedListener() {
