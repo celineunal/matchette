@@ -20,5 +20,6 @@
     <string name="colorPicker_tutorial">Pick color</string>
     <string name="lightness_slider_tutorial">Slide to change color lightness</string>
     <string name="camera_tutorial">Take picture of a color to apply on outfit</string>
+    <string name="camera">Camera</string>
 
 </resources>

@@ -2,7 +2,6 @@ package com.matchette.matchette;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -13,14 +12,11 @@ import android.renderscript.Matrix4f;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicColorMatrix;
 import android.renderscript.Type;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
-import com.devs.vectorchildfinder.VectorChildFinder;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -49,7 +45,7 @@ public class MainActivityFragment extends android.app.Fragment {
 
     }
 
-    private void createbitmapAndAllocation(String type){
+    private void createBitmapAndAllocation(String type){
         if (type.equals("shirt")){
             ImageView view = shirt;
             shirtBitmap = drawableToBitmap(view.getDrawable());
@@ -156,7 +152,7 @@ public class MainActivityFragment extends android.app.Fragment {
         shirt.setImageResource(rid);
         lp1.weight = weight;
         shirtLayout.setLayoutParams(lp1);
-        createbitmapAndAllocation("shirt");
+        createBitmapAndAllocation("shirt");
     }
 
     protected void changeStylePant(Style style) {
@@ -170,7 +166,7 @@ public class MainActivityFragment extends android.app.Fragment {
         pant.setImageResource(rid);
         lp1.weight = weight;
         shirtLayout.setLayoutParams(lp1);
-        createbitmapAndAllocation("pant");
+        createBitmapAndAllocation("pant");
     }
 
     private LinearLayout.LayoutParams makeLinearLayoutParam (int params, int height) {
@@ -194,6 +190,7 @@ public class MainActivityFragment extends android.app.Fragment {
             public void onClick(View v) {
                 MainActivity act = (MainActivity) getActivity();
                 act.animationLogicShirt();
+                act.checkColorShiftingEligibility();
             }
         });
         pant.setClickable(true);
@@ -202,12 +199,13 @@ public class MainActivityFragment extends android.app.Fragment {
             public void onClick(View v) {
                 MainActivity act = (MainActivity) getActivity();
                 act.animationLogicPant();
+                act.checkColorShiftingEligibility();
             }
         });
         rs = RenderScript.create(getActivity().getApplicationContext());
         matrix = ScriptIntrinsicColorMatrix.create(rs);
-        createbitmapAndAllocation("shirt");
-        createbitmapAndAllocation("pant");
+        createBitmapAndAllocation("shirt");
+        createBitmapAndAllocation("pant");
         return fragment;
     }
 }

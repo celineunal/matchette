@@ -29,7 +29,7 @@
                 android:id="@+id/gallery_button"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="1dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="5"
@@ -37,11 +37,23 @@
                 android:elevation="15dp"
                 android:text="@string/gallery" />
 
+            <android.support.design.button.MaterialButton
+                android:id="@+id/camera_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="5"
+                android:background="@color/accent"
+                android:elevation="15dp"
+                android:text="@string/camera" />
+
             <ImageButton
                 android:id="@+id/shareButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="10dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
@@ -52,7 +64,7 @@
                 android:id="@+id/saveButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="10dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
@@ -149,17 +161,34 @@
                     android:background="@null"
                     android:src="@drawable/close" />
             </LinearLayout>
-
-                <ImageButton
-                    android:id="@+id/cameraButton"
+                <LinearLayout
+                    android:id="@+id/color_shifting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginRight="3dp"
-                    android:layout_marginBottom="3dp"
-                    android:background="@drawable/button_rounded"
-                    android:src="@drawable/ic_photo_camera"
-                    android:layout_below="@+id/v_lightness_slider"/>
+                    android:orientation="horizontal"
+                    android:layout_weight="1">
+
+                    <ImageButton
+                        android:id="@+id/undoColor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_left_curve_arrow"
+                        android:background="@null"
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginBottom="5dp"
+                        />
+
+                    <ImageButton
+                        android:id="@+id/redoColor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_right_curve_arrow"
+                        android:background="@null"
+                        android:layout_marginLeft="80dp"
+                        android:layout_marginBottom="5dp"
+                        />
+
+                </LinearLayout>
 
             </LinearLayout>
 
