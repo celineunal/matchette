@@ -77,7 +77,7 @@ public class MainActivity extends Activity {
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
     private static final int REQUEST_TAKE_PHOTO = 1;
 
-    // going back and forth between chosen colors
+    // going back and forth between selected colors
     private Stack<Integer> shirtColors = new Stack<>(),
             pantsColors = new Stack<>(),
             shirtColors1 = new Stack<>(),
