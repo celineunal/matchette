@@ -2,11 +2,11 @@
     <style>
         <name>pants</name>
         <asset>pant</asset>
-        <weight>1.25</weight>
+        <weight>1.5</weight>
     </style>
     <style>
         <name>shorts</name>
         <asset>shorts</asset>
-        <weight>1.7</weight>
+        <weight>0.75</weight>
     </style>
 </styles>

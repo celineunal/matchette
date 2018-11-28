@@ -59,8 +59,8 @@ public class MainActivity extends Activity {
     String currSnackbarSelection = "shirt";
     Style currShirt = new Style("t-shirt", R.drawable.t_shirt, 1.0f);
     Style currPant = new Style("pants", R.drawable.pant,  1.25f);
-    int currShirtColor = Integer.parseInt("CCD1D9",16);
-    int currPantColor =  Integer.parseInt("CCD1D9",16);
+    int currShirtColor = Integer.parseInt("FFFFFF",16);
+    int currPantColor =  Integer.parseInt("FFFFFF",16);
 
     // recyclerView of styles
     private List<Style> shirtStyleList = new ArrayList<>();

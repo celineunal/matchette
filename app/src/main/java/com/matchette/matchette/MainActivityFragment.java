@@ -165,7 +165,7 @@ public class MainActivityFragment extends android.app.Fragment {
         float weight = style.getWeight();
         pant.setImageResource(rid);
         lp1.weight = weight;
-        shirtLayout.setLayoutParams(lp1);
+        pantLayout.setLayoutParams(lp1);
         createBitmapAndAllocation("pant");
     }
 
