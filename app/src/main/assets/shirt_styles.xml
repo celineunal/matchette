@@ -2,26 +2,26 @@
     <style>
         <name>t_shirt</name>
         <asset>t_shirt</asset>
-        <weight>1.0</weight>
+        <weight>1.1</weight>
     </style>
     <style>
         <name>dress_shirt</name>
         <asset>dress_shirt</asset>
-        <weight>1.0</weight>
+        <weight>1.3</weight>
     </style>
     <style>
         <name>hoodie</name>
         <asset>hoodie</asset>
-        <weight>1.2</weight>
+        <weight>1.4</weight>
     </style>
     <style>
         <name>polo</name>
         <asset>polo</asset>
-        <weight>1.2</weight>
+        <weight>1.4</weight>
     </style>
     <style>
         <name>long_sleeve</name>
         <asset>long_sleeve</asset>
-        <weight>0.95</weight>
+        <weight>1.3</weight>
     </style>
 </styles>
