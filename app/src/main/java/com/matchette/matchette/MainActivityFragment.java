@@ -12,6 +12,7 @@ import android.renderscript.Matrix4f;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicColorMatrix;
 import android.renderscript.Type;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,8 +31,8 @@ public class MainActivityFragment extends android.app.Fragment {
     LinearLayout paddingLayout;
     RenderScript rs;
     ScriptIntrinsicColorMatrix matrix;
-    Bitmap shirtBitmap;
-    Bitmap pantBitmap;
+    public Bitmap shirtBitmapFinal;
+    Bitmap pantBitmapFinal;
     Allocation finalAllocationShirt;
     Allocation finalAllocationPant;
     Allocation shirtAllocation;
@@ -39,25 +40,23 @@ public class MainActivityFragment extends android.app.Fragment {
 
     private AsyncTask<String, Void, Void> task;
 
-    private String currSelection = "shirt";
-
     public MainActivityFragment() {
 
     }
 
-    private void createBitmapAndAllocation(String type){
+    private void createBitmapAndAllocation(String type, Style style){
         if (type.equals("shirt")){
-            ImageView view = shirt;
-            shirtBitmap = drawableToBitmap(view.getDrawable());
+            Bitmap shirtBitmap = drawableToBitmap(getResources().getDrawable(style.getRid(),getActivity().getTheme()));
             Type.Builder rgbType = new Type.Builder(rs, Element.RGBA_8888(rs)).setX(shirtBitmap.getWidth()).setY(shirtBitmap.getHeight());
             finalAllocationShirt =  Allocation.createTyped(rs, rgbType.create(), Allocation.USAGE_SCRIPT);
             shirtAllocation =  Allocation.createFromBitmap(rs,shirtBitmap);
+            shirtBitmapFinal = Bitmap.createBitmap(shirtBitmap.getWidth(), shirtBitmap.getHeight(), Bitmap.Config.ARGB_8888);
         } else {
-            ImageView view = pant;
-            pantBitmap = drawableToBitmap(view.getDrawable());
+            Bitmap pantBitmap = drawableToBitmap(getResources().getDrawable(style.getRid(),getActivity().getTheme()));
             Type.Builder rgbType = new Type.Builder(rs, Element.RGBA_8888(rs)).setX(pantBitmap.getWidth()).setY(pantBitmap.getHeight());
             finalAllocationPant =  Allocation.createTyped(rs, rgbType.create(), Allocation.USAGE_SCRIPT);
             pantAllocation = Allocation.createFromBitmap(rs,pantBitmap);
+            pantBitmapFinal = Bitmap.createBitmap(pantBitmap.getWidth(), pantBitmap.getHeight(), Bitmap.Config.ARGB_8888);
         }
     }
 
@@ -80,9 +79,9 @@ public class MainActivityFragment extends android.app.Fragment {
             @Override
             protected void onPostExecute(Void aVoid) {
                 if (type.equals("shirt")){
-                    shirt.setImageBitmap(shirtBitmap);
+                    shirt.setImageBitmap(shirtBitmapFinal);
                 } else {
-                    pant.setImageBitmap(pantBitmap);
+                    pant.setImageBitmap(pantBitmapFinal);
                 }
                 super.onPostExecute(aVoid);
             }
@@ -91,6 +90,7 @@ public class MainActivityFragment extends android.app.Fragment {
 
 
     protected void changeBitmapUtil (int color, String type){
+        Log.d("called", "times");
         int red = (color>>16)&0xFF;
         int green = (color>>8)&0xFF;
         int blue = (color)&0xFF;
@@ -98,7 +98,7 @@ public class MainActivityFragment extends android.app.Fragment {
         float r = red/255f;
         float g = green/255f;
         float b = blue/255f;
-        float[] newColors = {r,g,b,1.0f};
+        //float[] newColors = {r,g,b,1.0f};
         Matrix4f m = new Matrix4f(new float[]{
                 r, 0f, 0f, 0f,
                 0f, g, 0f, 0f,
@@ -108,13 +108,11 @@ public class MainActivityFragment extends android.app.Fragment {
         if (type.equals("shirt")){
             matrix.setColorMatrix(m);
             matrix.forEach(shirtAllocation, finalAllocationShirt);
-            Bitmap.Config conf = Bitmap.Config.ARGB_8888;
-            finalAllocationShirt.copyTo(shirtBitmap);
+            finalAllocationShirt.copyTo(shirtBitmapFinal);
         } else {
             matrix.setColorMatrix(m);
             matrix.forEach(pantAllocation, finalAllocationPant);
-            Bitmap.Config conf = Bitmap.Config.ARGB_8888;
-            finalAllocationPant.copyTo(pantBitmap);
+            finalAllocationPant.copyTo(pantBitmapFinal);
         }
     }
 
@@ -152,7 +150,7 @@ public class MainActivityFragment extends android.app.Fragment {
         shirt.setImageResource(rid);
         lp1.weight = weight;
         shirtLayout.setLayoutParams(lp1);
-        createBitmapAndAllocation("shirt");
+        createBitmapAndAllocation("shirt",style);
     }
 
     protected void changeStylePant(Style style) {
@@ -166,7 +164,7 @@ public class MainActivityFragment extends android.app.Fragment {
         pant.setImageResource(rid);
         lp1.weight = weight;
         pantLayout.setLayoutParams(lp1);
-        createBitmapAndAllocation("pant");
+        createBitmapAndAllocation("pant",style);
     }
 
     private LinearLayout.LayoutParams makeLinearLayoutParam (int params, int height) {
@@ -204,8 +202,14 @@ public class MainActivityFragment extends android.app.Fragment {
         });
         rs = RenderScript.create(getActivity().getApplicationContext());
         matrix = ScriptIntrinsicColorMatrix.create(rs);
-        createBitmapAndAllocation("shirt");
-        createBitmapAndAllocation("pant");
         return fragment;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+        MainActivity act = (MainActivity) getActivity();
+        createBitmapAndAllocation("shirt",act.shirtStyleList.get(0));
+        createBitmapAndAllocation("pant",act.pantsStyleList.get(0));
     }
 }

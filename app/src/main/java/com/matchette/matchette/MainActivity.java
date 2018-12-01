@@ -24,6 +24,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -63,9 +64,9 @@ public class MainActivity extends Activity {
     int currPantColor =  Integer.parseInt("FFFFFF",16);
 
     // recyclerView of styles
-    private List<Style> shirtStyleList = new ArrayList<>();
-    private List<Style> pantsStyleList = new ArrayList<>();
-    private List<Style> currentItemList = new ArrayList<>();
+    public List<Style> shirtStyleList = new ArrayList<Style>();
+    public List<Style> pantsStyleList = new ArrayList<Style>();
+    private List<Style> currentItemList = new ArrayList<Style>();
     private RecyclerView recyclerView;
     private StyleAdapter sAdapter;
     private MainActivityFragment mainFragment;
@@ -91,11 +92,8 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-         super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mainFragmentTransaction();
-
         snackbarAnimation();
         setCloseSnackbar();
 
@@ -111,6 +109,7 @@ public class MainActivity extends Activity {
         createUndoColorButton();
         createRedoColorButton();
 
+        mainFragmentTransaction();
         showWholeLayoutTutorial();
     }
 
@@ -242,13 +241,6 @@ public class MainActivity extends Activity {
             public void onColorSelected(int i) {
                 checkColorShiftingEligibility();
                 changeStyleColor(i);
-            }
-        });
-
-        colorPicker.addOnColorChangedListener(new OnColorChangedListener() {
-            @Override
-            public void onColorChanged(int i) {
-                changeStyleColorUnrecorded(i);
             }
         });
     }
