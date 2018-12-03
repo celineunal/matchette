@@ -14,17 +14,14 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -76,7 +73,7 @@ public class MainActivity extends Activity {
 
     // taking photo
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
-    private static final int REQUEST_TAKE_PHOTO = 1;
+    private static final int PICK_COLOR = 3;
 
     // going back and forth between selected colors
     private Stack<Integer> shirtColors = new Stack<>(),
@@ -118,9 +115,14 @@ public class MainActivity extends Activity {
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getBitmapFromCamera();
+                openCamera();
             }
         });
+    }
+
+    private void openCamera() {
+        Intent cameraIntent = new Intent(this, CameraActivity.class);
+        startActivityForResult(cameraIntent, PICK_COLOR);
     }
 
     private void mainFragmentTransaction() {
@@ -239,8 +241,16 @@ public class MainActivity extends Activity {
         colorPicker.addOnColorSelectedListener(new OnColorSelectedListener() {
             @Override
             public void onColorSelected(int i) {
-                checkColorShiftingEligibility();
+//                checkColorShiftingEligibility();
                 changeStyleColor(i);
+            }
+        });
+
+        // color changes when lightness changes
+        colorPicker.addOnColorChangedListener(new OnColorChangedListener() {
+            @Override
+            public void onColorChanged(int i) {
+                changeStyleColorUnrecorded(i);
             }
         });
     }
@@ -255,6 +265,7 @@ public class MainActivity extends Activity {
             pantsColors.push(currPantColor);
             mainFragment.changeColorPant(i);
         }
+        checkColorShiftingEligibility();
     }
 
     private void changeStyleColorUnrecorded(int i){
@@ -421,11 +432,10 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
-            Bitmap colorPicture = (Bitmap) data.getExtras().get("data");//this is your bitmap image and now you can do whatever you want with this
-            createPaletteAsync(colorPicture);
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        if (requestCode == PICK_COLOR && resultCode == RESULT_OK) {
+            changeStyleColor(data.getIntExtra("Selected color", currShirtColor));
         }
     }
 
@@ -559,31 +569,16 @@ public class MainActivity extends Activity {
         );
     }
 
-    private void getBitmapFromCamera() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (intent.resolveActivity(getPackageManager()) != null) {
-           startActivityForResult(intent, REQUEST_TAKE_PHOTO);
-        } else {
-            Toast.makeText(getApplicationContext(), R.string.photoError, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    // Generate palette asynchronously and use it on a different
-// thread using onGenerated()
-    public void createPaletteAsync(Bitmap bitmap) {
-        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-            public void onGenerated(Palette p) {
-                int domColor = p.getDominantColor(Color.parseColor("#CCD1D9"));
-                if (currSnackbarSelection.equals("shirt")) {
-                    shirtColors.push(domColor);
-                    mainFragment.changeColorShirt(domColor);
-                } else {
-                    pantsColors.push(domColor);
-                    mainFragment.changeColorPant(domColor);
-                }
-            }
-        });
-    }
+//    // Generate palette asynchronously and use it on a different
+//// thread using onGenerated()
+//    public void createPaletteAsync(Bitmap bitmap) {
+//        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+//            public void onGenerated(Palette p) {
+//                int domColor = p.getDominantColor(Color.parseColor("#CCD1D9"));
+//                changeStyleColor(domColor);
+//            }
+//        });
+//    }
 
     private void showWholeLayoutTutorial() {
         ShowcaseConfig config = new ShowcaseConfig();

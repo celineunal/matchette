@@ -35,5 +35,5 @@ dependencies {
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'
     implementation "android.arch.paging:runtime:1.0.1"
     implementation 'com.android.support.constraint:constraint-layout:2.0.0-alpha2'
+    implementation 'com.github.madrapps:eyedropper:1.1.0'
 }
-
