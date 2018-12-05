@@ -98,7 +98,6 @@ public class MainActivity extends Activity {
         recyclerViewListener();
 
         createColorPickerView();
-        createGalleryButton();
         createShareButton();
         createSaveButton();
         createCameraButton();
@@ -111,7 +110,7 @@ public class MainActivity extends Activity {
     }
 
     private void createCameraButton() {
-        final Button cameraButton = findViewById(R.id.camera_button);
+        final ImageButton cameraButton = findViewById(R.id.camera_button);
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -130,16 +129,6 @@ public class MainActivity extends Activity {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.add(R.id.fragment, mainFragment);
         ft.commit();
-    }
-
-    private void createGalleryButton() {
-        final Button galleryButton = findViewById(R.id.gallery_button);
-        galleryButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Coming soon!", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void createShareButton() {
@@ -587,9 +576,6 @@ public class MainActivity extends Activity {
         MaterialShowcaseSequence wholeLayoutSequence = new MaterialShowcaseSequence(this, WHOLE_LAYOUT_SHOWCASE_ID);
         wholeLayoutSequence.setConfig(config);
 
-        wholeLayoutSequence.addSequenceItem(findViewById(R.id.gallery_button),
-                "Collection of saved outfits, can be ordered based on your preference",
-                "GOT IT");
         wholeLayoutSequence.addSequenceItem(findViewById(R.id.camera_button),
                 "Take picture of a color to apply on outfit",
                 "GOT IT");
