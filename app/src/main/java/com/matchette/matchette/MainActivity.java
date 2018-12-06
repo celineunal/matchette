@@ -24,7 +24,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -82,9 +81,10 @@ public class MainActivity extends Activity {
             pantsColors1 = new Stack<>();
     private ImageButton redoColor, undoColor;
 
-    // first-time tutorial
+    // for tutorial
     final String WHOLE_LAYOUT_SHOWCASE_ID = "12345",
-                SNACKBAR_LAYOUT_SHOWCASE_ID = "12346"; // Unique ID's to show tutorialS only once
+                SNACKBAR_LAYOUT_SHOWCASE_ID = "12346"; // Unique ID's to show tutorials only once
+    final String GOT_IT = "GOT IT";
 
 
     @Override
@@ -230,8 +230,8 @@ public class MainActivity extends Activity {
         colorPicker.addOnColorSelectedListener(new OnColorSelectedListener() {
             @Override
             public void onColorSelected(int i) {
-//                checkColorShiftingEligibility();
                 changeStyleColor(i);
+                checkColorShiftingEligibility();
             }
         });
 
@@ -254,7 +254,6 @@ public class MainActivity extends Activity {
             pantsColors.push(currPantColor);
             mainFragment.changeColorPant(i);
         }
-        checkColorShiftingEligibility();
     }
 
     private void changeStyleColorUnrecorded(int i){
@@ -276,8 +275,8 @@ public class MainActivity extends Activity {
         undoColor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkColorShiftingEligibility();
                 undoColor();
+                checkColorShiftingEligibility();
             }
         });
 
@@ -289,8 +288,8 @@ public class MainActivity extends Activity {
         redoColor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkColorShiftingEligibility();
                 redoColor();
+                checkColorShiftingEligibility();
             }
         });
 
@@ -298,61 +297,68 @@ public class MainActivity extends Activity {
     }
 
     private void undoColor(){
-        if (currSnackbarSelection.equals("shirt") && shirtColors.size() >= 2){
-            shirtColors1.push(shirtColors.pop());
-            currShirtColor = shirtColors.peek();
-            mainFragment.changeColorShirt(currShirtColor);
-        } else if (currSnackbarSelection.equals("pant") && pantsColors.size() >= 2){
-            pantsColors1.push(pantsColors.pop());
-            currPantColor = pantsColors.peek();
-            mainFragment.changeColorPant(currPantColor);
+        if (canUndoColor()){
+            if (currSnackbarSelection.equals("shirt")){
+                shirtColors1.push(shirtColors.pop());
+                currShirtColor = shirtColors.peek();
+                mainFragment.changeColorShirt(currShirtColor);
+            } else {
+                pantsColors1.push(pantsColors.pop());
+                currPantColor = pantsColors.peek();
+                mainFragment.changeColorPant(currPantColor);
+            }
         }
     }
 
     private void redoColor(){
-        if (currSnackbarSelection.equals("shirt") && shirtColors1.size() >= 2){
-            shirtColors.push(shirtColors1.pop());
-            currShirtColor = shirtColors1.peek();
-            mainFragment.changeColorShirt(currShirtColor);
-        } else if (currSnackbarSelection.equals("pant") && pantsColors1.size() >= 2){
-            pantsColors.push(pantsColors1.pop());
-            currPantColor = pantsColors1.peek();
-            mainFragment.changeColorPant(currPantColor);
+        if (canRedoColor()){
+            if (currSnackbarSelection.equals("shirt")){
+                shirtColors.push(shirtColors1.pop());
+                currShirtColor = shirtColors.peek();
+                mainFragment.changeColorShirt(currShirtColor);
+            } else {
+                pantsColors.push(pantsColors1.pop());
+                currPantColor = pantsColors.peek();
+                mainFragment.changeColorPant(currPantColor);
+            }
         }
     }
 
-    private void deactivateButton(ImageButton btn){
+    private void disableButton(ImageButton btn){
         btn.setColorFilter(Color.argb(100,119,136,153));
         btn.setEnabled(false);
     }
 
-    private void reactivateButton(ImageButton btn){
+    private void enableButton(ImageButton btn){
         btn.setColorFilter(getResources().getColor(R.color.primary_light));
         btn.setEnabled(true);
     }
 
     public void checkColorShiftingEligibility(){
-        if  (((currSnackbarSelection.equals("shirt") && shirtColors.size() >= 2) ||
-                (currSnackbarSelection.equals("pant") && pantsColors.size() >= 2)) &&
-                !undoColor.isEnabled()) {
-            reactivateButton(undoColor);
+        if  (canUndoColor() && !undoColor.isEnabled()) {
+            enableButton(undoColor);
         }
-        else if (((currSnackbarSelection.equals("shirt") && shirtColors.size() < 2) ||
-                (currSnackbarSelection.equals("pant") && pantsColors.size() < 2)) &&
-                undoColor.isEnabled())
-            deactivateButton(undoColor);
+        else if (!canUndoColor() && undoColor.isEnabled())
+            disableButton(undoColor);
 
-        if  (((currSnackbarSelection.equals("shirt") && shirtColors1.size() >= 2) ||
-                (currSnackbarSelection.equals("pant") && pantsColors1.size()>=2)) &&
-                !redoColor.isEnabled()){
-            reactivateButton(redoColor);
+        if  (canRedoColor() && !redoColor.isEnabled()){
+            enableButton(redoColor);
         }
-        else if (((currSnackbarSelection.equals("shirt") && shirtColors1.size() < 2) ||
-                (currSnackbarSelection.equals("pant") && pantsColors1.size() < 2)) &&
-                redoColor.isEnabled())
-            deactivateButton(redoColor);
+        else if (!canRedoColor() && redoColor.isEnabled())
+            disableButton(redoColor);
     }
 
+    private boolean canUndoColor(){
+        if (currSnackbarSelection.equals("shirt"))
+            return shirtColors.size() > 1;
+        else return pantsColors.size() > 1;
+    }
+
+    private boolean canRedoColor(){
+        if (currSnackbarSelection.equals("shirt"))
+            return !shirtColors1.isEmpty();
+        else return !pantsColors1.isEmpty();
+    }
 
     public void saveButtonListener(ImageButton btn){
         btn.setOnClickListener(new View.OnClickListener(){
@@ -425,6 +431,7 @@ public class MainActivity extends Activity {
                                     Intent data) {
         if (requestCode == PICK_COLOR && resultCode == RESULT_OK) {
             changeStyleColor(data.getIntExtra("Selected color", currShirtColor));
+            checkColorShiftingEligibility();
         }
     }
 
@@ -558,59 +565,62 @@ public class MainActivity extends Activity {
         );
     }
 
-//    // Generate palette asynchronously and use it on a different
-//// thread using onGenerated()
-//    public void createPaletteAsync(Bitmap bitmap) {
-//        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-//            public void onGenerated(Palette p) {
-//                int domColor = p.getDominantColor(Color.parseColor("#CCD1D9"));
-//                changeStyleColor(domColor);
-//            }
-//        });
-//    }
-
     private void showWholeLayoutTutorial() {
-        ShowcaseConfig config = new ShowcaseConfig();
-        config.setDelay(500); // half second between each showcase view
+        MaterialShowcaseSequence wholeLayoutSequence = createShowcaseSequence(WHOLE_LAYOUT_SHOWCASE_ID);
 
-        MaterialShowcaseSequence wholeLayoutSequence = new MaterialShowcaseSequence(this, WHOLE_LAYOUT_SHOWCASE_ID);
-        wholeLayoutSequence.setConfig(config);
-
-        wholeLayoutSequence.addSequenceItem(findViewById(R.id.camera_button),
-                "Take picture of a color to apply on outfit",
-                "GOT IT");
-        wholeLayoutSequence.addSequenceItem(findViewById(R.id.shareButton),
-                "Share the current outfit",
-                "GOT IT");
-
-        wholeLayoutSequence.addSequenceItem(findViewById(R.id.saveButton),
-                "Save the current outfit to your phone",
-                "GOT IT");
+        addToShowcaseSequence(findViewById(R.id.colorPickerView),
+                "Tap on shirt or pants to change style and color",
+                wholeLayoutSequence);
+        addToShowcaseSequence(findViewById(R.id.shareButton),
+                "Share current outfit",
+                wholeLayoutSequence);
+        addToShowcaseSequence(findViewById(R.id.saveButton),
+                "Save current outfit to phone",
+                wholeLayoutSequence);
 
         wholeLayoutSequence.start();
     }
 
     private void showSnackbarTutorial() {
-            ShowcaseConfig config = new ShowcaseConfig();
-            config.setDelay(500); // half second between each showcase view
+        MaterialShowcaseSequence snackbarSequence = createShowcaseSequence(SNACKBAR_LAYOUT_SHOWCASE_ID);
 
-            MaterialShowcaseSequence snackbarSequence = new MaterialShowcaseSequence(this, SNACKBAR_LAYOUT_SHOWCASE_ID);
-            snackbarSequence.setConfig(config);
+        addToShowcaseSequence(findViewById(R.id.recycler_view),
+                "Scroll down to choose style",
+                snackbarSequence);
+        addToShowcaseSequence(findViewById(R.id.colorPickerView),
+                "Tap to pick a color",
+                snackbarSequence);
+        addToShowcaseSequence(findViewById(R.id.v_lightness_slider),
+                "Slide to change color lightness",
+                snackbarSequence);
+        addToShowcaseSequence(findViewById(R.id.undoColor),
+                "Go back one color",
+                snackbarSequence);
+        addToShowcaseSequence(findViewById(R.id.redoColor),
+                "Go forth one color",
+                snackbarSequence);
+        addToShowcaseSequence(findViewById(R.id.camera_button),
+                "Take picture to pick color",
+                snackbarSequence);
+        addToShowcaseSequence(findViewById(R.id.closeSnackbar),
+                "Close bottom sheet",
+                snackbarSequence);
 
-            snackbarSequence.addSequenceItem(findViewById(R.id.recycler_view),
-                    "Scroll down to choose style",
-                    "GOT IT");
-            snackbarSequence.addSequenceItem(findViewById(R.id.colorPickerView),
-                    "Tap to pick a color",
-                    "GOT IT");
-            snackbarSequence.addSequenceItem(findViewById(R.id.v_lightness_slider),
-                    "Slide to change color lightness",
-                    "GOT IT");
-            snackbarSequence.addSequenceItem(findViewById(R.id.closeSnackbar),
-                    "Click here or slide down to close bottom sheet",
-                    "GOT IT");
+        snackbarSequence.start();
+    }
 
-            snackbarSequence.start();
+    private MaterialShowcaseSequence createShowcaseSequence(String uniqueID){
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500); // half second between each showcase view
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, uniqueID);
+        sequence.setConfig(config);
+
+        return sequence;
+    }
+
+    private void addToShowcaseSequence(View view, String message, MaterialShowcaseSequence sequence){
+        sequence.addSequenceItem(view, message, GOT_IT);
     }
 }
 

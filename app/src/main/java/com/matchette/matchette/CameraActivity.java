@@ -13,9 +13,14 @@ import android.widget.Toast;
 
 import com.madrapps.eyedropper.EyeDropper;
 
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
+
 public class CameraActivity extends AppCompatActivity {
 
     private static final int REQUEST_TAKE_PHOTO = 1;
+    final String SHOWCASE_ID = "123"; // Unique ID to show tutorial only once
+    final String GOT_IT = "GOT IT";
 
     private ImageView imageView;
     private ImageView checkButton;
@@ -40,6 +45,7 @@ public class CameraActivity extends AppCompatActivity {
             }
         });
 
+//        showTutorial();
         getBitmapFromCamera();
     }
 
@@ -72,5 +78,22 @@ public class CameraActivity extends AppCompatActivity {
                 checkButton.setColorFilter(color);
             }
         });
+    }
+
+    private void showTutorial(){
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500); // half second between each showcase view
+
+        MaterialShowcaseSequence showcaseSequence = new MaterialShowcaseSequence(this, SHOWCASE_ID);
+        showcaseSequence.setConfig(config);
+
+        showcaseSequence.addSequenceItem(checkButton,
+                "Take a picture then tap on a point to pick color",
+                GOT_IT);
+        showcaseSequence.addSequenceItem(checkButton,
+                "Color is reflected on check button. Click check to finish",
+                GOT_IT);
+
+        showcaseSequence.start();
     }
 }
