@@ -32,30 +32,6 @@
                 android:layout_gravity="top|right"
                 android:background="@color/primary"
                 android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/shareButton"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    android:src="@drawable/ic_share" />
-
-                <ImageButton
-                    android:id="@+id/saveButton"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    android:src="@drawable/ic_save" />
             </LinearLayout>
 
             <fragment xmlns:android="http://schemas.android.com/apk/res/android"
@@ -185,6 +161,33 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/shareButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="10dp"
+        android:paddingTop="15dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="10dp"
+        android:layout_weight="1"
+        android:background="@null"
+        app:layout_constraintRight_toLeftOf="@id/saveButton"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/ic_share" />
+
+    <ImageButton
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="10dp"
+        android:paddingTop="15dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="10dp"
+        android:background="@null"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/ic_save" />
 
 </android.support.constraint.ConstraintLayout>
 
