@@ -82,8 +82,8 @@ public class MainActivity extends Activity {
     private ImageButton redoColor, undoColor;
 
     // for tutorial
-    final String WHOLE_LAYOUT_SHOWCASE_ID = "12345",
-                SNACKBAR_LAYOUT_SHOWCASE_ID = "12346"; // Unique ID's to show tutorials only once
+    final String WHOLE_LAYOUT_SHOWCASE_ID = "123",
+                SNACKBAR_LAYOUT_SHOWCASE_ID = "124"; // Unique ID's to show tutorials only once
     final String GOT_IT = "GOT IT";
 
 
@@ -612,6 +612,7 @@ public class MainActivity extends Activity {
     private MaterialShowcaseSequence createShowcaseSequence(String uniqueID){
         ShowcaseConfig config = new ShowcaseConfig();
         config.setDelay(500); // half second between each showcase view
+        config.setRenderOverNavigationBar(true);
 
         MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, uniqueID);
         sequence.setConfig(config);
