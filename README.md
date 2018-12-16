@@ -25,7 +25,7 @@ The repository is an android studio project. We recommend using android studio's
     <li> Once the build is successful, run the app on an emulator connected device
 </ul>
 
-Alternatively, you can install the app directly using the actual apk. <a href="https://www.applivery.com/docs/troubleshooting/android-unknown-sources"> Make sure to allow apps from unknown sources</a>. The apk is avaible <href src="https://drive.google.com/drive/folders/1SI9y8lcyXGra462nVflLJ3CwNTB2eBrp">here</a>
+Alternatively, you can install the app directly using the actual apk. <a href="https://www.applivery.com/docs/troubleshooting/android-unknown-sources"> Make sure to allow apps from unknown sources</a>. The apk is available <a href="https://drive.google.com/drive/folders/1SI9y8lcyXGra462nVflLJ3CwNTB2eBrp">here</a>
 
 ## Clothing Items
 
