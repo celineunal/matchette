@@ -1,10 +1,20 @@
-# Matchette 
+Match-ette is a clothing visualization android application that allows users to select different styles and colors to find a preference that fits them
 
-Match-ette is a clothing visualization android application that allows users to select different styles and colors in hopes of finding a preference that fits them. 
+* [Compatible Platforms](#compatible-platforms)
+* [Screenshots](#screenshots)
+* [Clothing Items](#clothing-items)
+     * [Tops](#tops)
+     * [Bottoms](#bottoms)
+     
+## Compatible Platforms
+<img style="display: inline-block" width="35px" src="https://www.thera-link.com/wp-content/uploads/2015/02/androidicon.png" alt="Android"/>  
 
+## Screenshots
 <img width=250px style="margin:10px; display:inline-block" src="./Screenshot1.png"/>   <img width=250px style="margin:10px; display:inline-block" src="./Screenshot2.png"/>   <img width=250px style="margin:10px; display:inline-block" src="./Screenshot3.png"/>
 
- ## Shirts
+## Clothing Items
+
+### Tops
  Currently the following upper-body styles are available: 
  <ul>
   <li>Men's T-Shirt</li>
@@ -15,7 +25,7 @@ Match-ette is a clothing visualization android application that allows users to 
   <li>Long Sleeve T-Shirt</li>
   </ul>
   
-  ## Pants
+ ### Bottoms
    Currently the following lower-body styles are available: 
    <ul>
   <li>Chino Pants</li>
