@@ -3,7 +3,7 @@ A clothing visualization application that allows users to select different style
 
 * [Compatible Platforms](#compatible-platforms)
 * [Screenshots](#screenshots)
-* [Instruction](#instructions)
+* [Installation Instructions](#installation-instructions)
 * [Clothing Items](#clothing-items)
      * [Tops](#tops)
      * [Bottoms](#bottoms)
@@ -16,7 +16,7 @@ A clothing visualization application that allows users to select different style
 ## Screenshots
 <img width=250px style="margin:10px; display:inline-block" src="./Screenshot1.png"/>   <img width=250px style="margin:10px; display:inline-block" src="./Screenshot2.png"/>   <img width=250px style="margin:10px; display:inline-block" src="./Screenshot3.png"/>
 
-## Instructions
+## Installation Instructions
 The repository is an android studio project. We recommend using android studio's built-in VCS system. 
 <ul>
     <li> Fork the repository
@@ -24,6 +24,8 @@ The repository is an android studio project. We recommend using android studio's
     <li> Create your token using github credentials. Select the forked repository 
     <li> Once the build is successful, run the app on an emulator connected device
 </ul>
+
+Alternatively, you can install the app directly using the actual apk. <a href="https://www.applivery.com/docs/troubleshooting/android-unknown-sources"> Make sure to allow apps from unknown sources</a>. The apk is avaible <href src="https://drive.google.com/drive/folders/1SI9y8lcyXGra462nVflLJ3CwNTB2eBrp">here</a>
 
 ## Clothing Items
 
