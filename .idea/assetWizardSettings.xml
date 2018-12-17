@@ -41,6 +41,22 @@
                                 </PersistentState>
                               </value>
                             </entry>
+            <PersistentState />
+          </value>
+        </entry>
+        <entry key="vectorWizard">
+          <value>
+            <PersistentState>
+              <option name="children">
+                <map>
+                  <entry key="vectorAssetStep">
+                    <value>
+                      <PersistentState>
+                        <option name="values">
+                          <map>
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_checkmark" />
+                            <entry key="sourceFile" value="C:\Users\Chau Giang\Downloads\checking.svg" />
                           </map>
                         </option>
                       </PersistentState>
