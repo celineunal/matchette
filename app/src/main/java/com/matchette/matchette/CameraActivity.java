@@ -99,7 +99,7 @@ public class CameraActivity extends AppCompatActivity {
     /**
      * Pick a color from an ImageView by tapping on a point of the ImageView. Reflect the selected
      * color on the check button.
-     * Using EyeDropper by Madrapps.
+     * Using EyeDropper by Madrapps
      * @param imageView
      */
 
