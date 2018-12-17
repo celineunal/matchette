@@ -16,6 +16,11 @@ import com.madrapps.eyedropper.EyeDropper;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
+/**
+ * This is the Camera Activity for taking a picture and picking a color from a spot on that picture.
+ * When finished, the activity adds the chosen color to an intent to be passed back to the MainActivity.
+ */
+
 public class CameraActivity extends AppCompatActivity {
 
     private static final int REQUEST_TAKE_PHOTO = 1;
@@ -34,22 +39,16 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera);
         imageView = findViewById(R.id.captured_photo);
 
-        checkButton = findViewById(R.id.checkButton);
-        checkButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent colorSelected = new Intent();
-                colorSelected.putExtra("Selected color", currentSelectedColor);
-                setResult(RESULT_OK, colorSelected);
-                finish();
-            }
-        });
-
+        createCheckButton();
         showTutorial();
-        getBitmapFromCamera();
+        openCamera();
     }
 
-    private void getBitmapFromCamera() {
+    /**
+     * Open up the camera to take a picture.
+     */
+
+    private void openCamera() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(intent, REQUEST_TAKE_PHOTO);
@@ -58,6 +57,14 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Respond to the request to take a picture.
+     * If allowed to take a picture, get a bitmap from the camera and set it on an ImageView
+     * and pick a color from there.
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -70,6 +77,32 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Create a check button and its listener. This button reflects the color being tapped on.
+     * When the check button is clicked, the selected color is added to an intent to be sent back
+     * to the MainActivity, and CameraActivity is finished.
+     */
+
+    private void createCheckButton() {
+        checkButton = findViewById(R.id.checkButton);
+        checkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent colorSelected = new Intent();
+                colorSelected.putExtra("Selected color", currentSelectedColor);
+                setResult(RESULT_OK, colorSelected);
+                finish();
+            }
+        });
+    }
+
+    /**
+     * Pick a color from an ImageView by tapping on a point of the ImageView. Reflect the selected
+     * color on the check button.
+     * Using EyeDropper by Madrapps.
+     * @param imageView
+     */
+
     private void pickColor(ImageView imageView) {
         new EyeDropper(imageView, new EyeDropper.ColorSelectionListener() {
             @Override
@@ -79,6 +112,10 @@ public class CameraActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * Show tutorial for this activity, when it is first opened.
+     */
 
     private void showTutorial(){
         ShowcaseConfig config = new ShowcaseConfig();

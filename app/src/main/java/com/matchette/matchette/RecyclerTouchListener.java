@@ -6,6 +6,10 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+/**
+ * This is the listener for RecyclerView.
+ */
+
 public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
 
     private GestureDetector gestureDetector;
@@ -21,6 +25,7 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
 
             @Override
             public void onLongPress(MotionEvent e) {
+                // when each item in the RecyclerView is clicked on
                 View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
                 if (child != null && clickListener != null) {
                     clickListener.onLongClick(child, recyclerView.getChildPosition(child));

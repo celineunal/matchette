@@ -14,6 +14,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * This class handles saving outfits.
+ */
+
 public class Save {
 
     /**
@@ -62,7 +66,7 @@ public class Save {
     }
 
     /**
-     * Saves an image to cache (so it doesn't need storage permission)
+     * Save an image to cache (so it doesn't need storage permission)
      * @param bitmap Bitmap to be saved.
      * @param name Name of the file.
      */
@@ -71,12 +75,11 @@ public class Save {
         cachePath.mkdirs(); // don't forget to make the directory
         File file = new File(cachePath, name);
         streamBitmapOutAsAFile(bitmap, file);
-        //Log.d("FileProvider", "File provider worked.");
     }
 
 
     /**
-     * Turns a view in to a bitmap
+     * Turn a view into a bitmap.
      * @param view
      * @return The view as a bitmap
      */

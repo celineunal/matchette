@@ -12,23 +12,43 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class reads styles from xml files.
+ */
+
 public class StyleParser {
 
     private static final String ns = null;
 
+    /**
+     * Parse styles in an xml file.
+     * @param in
+     * @param context
+     * @return
+     * @throws XmlPullParserException
+     * @throws IOException
+     */
+
     public List<Style> parse(InputStream in, Context context) throws XmlPullParserException, IOException {
         try {
             XmlPullParser parser = Xml.newPullParser();
-            Log.d("XMLparsing", "pull parser initiated");
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             parser.setInput(in, null);
-            Log.d("XMLparsing", "input stream passed");
             parser.nextTag();
             return readStyles(parser, context);
         } finally {
             in.close();
         }
     }
+
+    /**
+     * Read styles of clothing items and add them to a list.
+     * @param parser
+     * @param context
+     * @return list of styles
+     * @throws XmlPullParserException
+     * @throws IOException
+     */
 
     private List<Style> readStyles(XmlPullParser parser, Context context) throws XmlPullParserException, IOException {
         List<Style> styles = new ArrayList<>();
@@ -48,6 +68,15 @@ public class StyleParser {
         }
         return styles;
     }
+
+    /**
+     * Read styles from the xml file.
+     * @param parser
+     * @param context
+     * @return style of clothing items being read
+     * @throws XmlPullParserException
+     * @throws IOException
+     */
 
     private Style readStyle (XmlPullParser parser, Context context) throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, ns, "style");
@@ -74,6 +103,14 @@ public class StyleParser {
         return new Style(name, rid, weight);
     }
 
+    /**
+     * Read names of clothing items.
+     * @param parser
+     * @return name of clothing items
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
+
     private String readName(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, "name");
         String name = readText(parser);
@@ -81,12 +118,28 @@ public class StyleParser {
         return name;
     }
 
+    /**
+     * Read the id of clothing items in R.
+     * @param parser
+     * @return id of clothing items
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
+
     private String readRidName(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, "asset");
         String ridName = readText(parser);
         parser.require(XmlPullParser.END_TAG, ns, "asset");
         return ridName;
     }
+
+    /**
+     * Read the weight of clothing items.
+     * @param parser
+     * @return weight of clothing items
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
 
     private float readWeight(XmlPullParser parser) throws  IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, "weight");
@@ -96,6 +149,14 @@ public class StyleParser {
         return Float.parseFloat(weight);
     }
 
+    /**
+     * Read text from an xml file.
+     * @param parser
+     * @return string result
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
+
     private String readText(XmlPullParser parser) throws IOException, XmlPullParserException {
         String result = "";
         if (parser.next() == XmlPullParser.TEXT) {
@@ -104,6 +165,14 @@ public class StyleParser {
         }
         return result;
     }
+
+
+    /**
+     * Skip certain elements in the xml.
+     * @param parser
+     * @throws XmlPullParserException
+     * @throws IOException
+     */
 
     private void skip(XmlPullParser parser) throws XmlPullParserException, IOException {
         if (parser.getEventType() != XmlPullParser.START_TAG) {

@@ -6,8 +6,9 @@ import android.view.MotionEvent;
 import android.view.View;
 
 /**
- * Detects left and right swipes across a view.
+ * Detects swiping on a view.
  */
+
 public class OnSwipeTouchListener implements View.OnTouchListener {
 
     private final GestureDetector gestureDetector;
@@ -26,6 +27,9 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
         return gestureDetector.onTouchEvent(event);
     }
 
+    /**
+     * Detects gestures.
+     */
     private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
 
         private static final int SWIPE_DISTANCE_THRESHOLD = 50;
